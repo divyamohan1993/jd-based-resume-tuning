@@ -828,19 +828,19 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
       11. confidence_score (integer): 0-100 indicating reliability of this analysis.  
       12. tone (string): detected tone of the resume (e.g., professional, enthusiastic).  
       13. behavioral_analysis (object): ratings for key traits, e.g. {{"leadership": string, "teamwork": string, "adaptability": string}}.  
-      14. assertiveness_level (string): level of assertiveness in language (High/Med/Low).  
-      15. clarity (string): level of clarity in descriptions (High/Med/Low).  
-      16. emotional_intelligence (string): presence of emotional intelligence cues (High/Med/Low).        
-      17. customization_level (string): degree of tailoring to the job (Tailored/Generic).  
-      18. quantification_strength (string): strength of numeric data usage (Strong/Med/Weak).  
-      19. readability_score (integer): readability score (0–100).  
-      20. grammar_accuracy (string): grammar accuracy status (Error-free/Minor issues/Major issues).  
-      21. structure_coherence (string): structural coherence status (Well-structured/Needs improvement).  
-      22. conciseness (string): conciseness evaluation (Concise/Verbose).  
-      23. achievement_focus (string): focus on achievements (Strong/Moderate/Weak).  
-      24. leadership_emphasis (string): emphasis on leadership (Strong/Moderate/Weak).  
-      25. teamwork_emphasis (string): emphasis on teamwork (Strong/Moderate/Weak).  
-      26. metric_usage (string): frequency of metric usage (High/Medium/Low).
+      14. assertiveness_level (integer): 0-100 based on level of assertiveness in language.
+      15. clarity (integer): 0-100 based on level of clarity in descriptions.
+      16. emotional_intelligence (integer): 0-100 based on presence of emotional intelligence cues.        
+      17. customization_level (integer): 0-100 based on degree of tailoring to the job.  
+      18. quantification_strength (integer): 0-100 based on strength of numeric data usage (Strong/Med/Weak).  
+      19. readability_score (integer): 0-100 based on readability of the resume.  
+      20. grammar_accuracy (integer): 0-100 based on grammar accuracy status.  
+      21. structure_coherence (integer): 0-100 based on structural coherence status.  
+      22. conciseness (integer): 0-100 based on conciseness evaluation.  
+      23. achievement_focus (integer): 0-100 based on focus on achievements.  
+      24. leadership_emphasis (integer): 0-100 based on emphasis on leadership.  
+      25. teamwork_emphasis (integer): 0-100 based on emphasis on teamwork.  
+      26. metric_usage (integer): 0-100 based on frequency of metric usage.
     
     Inputs (do not hallucinate—use only what’s provided):
       RESUME_TEXT:
