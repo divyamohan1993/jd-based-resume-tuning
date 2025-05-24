@@ -7,6 +7,7 @@ import json
 import mammoth
 import PyPDF2
 import docx
+import itertools
 from docx.shared import Pt, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.style import WD_STYLE_TYPE
@@ -23,7 +24,10 @@ CORS(app)  # Enable CORS for frontend communication
 
 # Configure Gemini API
 genai.configure(api_key="your_api_key")  # Replace with your actual API Key
+
 geminimodel = "gemini-2.5-pro-preview-05-06"
+geminimodel = "gemini-1.5-pro-latest"
+geminimodel = "gemini-2.5-flash-preview-05-20"
 
 def extract_text_from_file(file):
     """
@@ -524,10 +528,236 @@ def extract_skills(job_description):
         }
         return skills_json, skills
 
-def analyze_resume(resume_text, skills, skills_by_category=None):
+# def analyze_resume(resume_text, skills, skills_by_category=None):
+#     """
+#     Enhanced resume analysis with matching by category and detailed feedback
+#     """
+    
+#     # Comprehensive Gemini-based analysis
+#     model = genai.GenerativeModel(geminimodel)
+
+#     # If skills_by_category is not provided, assume all skills are technical
+#     if skills_by_category is None:
+#         skills_by_category = {
+#             "Technical Skills": skills,
+#             "Soft Skills": [],
+#             "Domain Knowledge": []
+#         }
+    
+#     # Basic skill matching for all skills
+#     # matched_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
+#     # match_percentage = (len(matched_skills) / len(skills)) * 100 if skills else 0
+#     # ── AI-DRIVEN SKILL MATCHING ────────────────────────────────────────    
+
+#     match_prompt = f"""
+#     You are an expert resume-parser AI. Given a list of REQUIRED_SKILLS and a RESUME_TEXT, identify exactly which skills are present or clearly implied in the resume.  Handle synonyms, related terms, and context—do not just do substring checks.
+    
+#     REQUIRED_SKILLS: {skills}
+    
+#     RESUME_TEXT:
+#     {resume_text}
+    
+#     Return JSON ONLY, in this exact shape:
+#     {{
+#       "matched_skills": [...],    // skills from REQUIRED_SKILLS that are present/implied
+#       "unmatched_skills": [...]   // the rest
+#     }}
+#     """
+#     try:
+#         match_resp = model.generate_content(match_prompt)
+#         match_json = json.loads(match_resp.text.strip())
+#         matched_skills   = match_json.get("matched_skills", [])
+#         unmatched_skills = match_json.get("unmatched_skills", [])
+#     except Exception:
+#         # fallback to literal substring
+#         matched_skills   = [s for s in skills if s.lower() in resume_text.lower()]
+#         unmatched_skills = [s for s in skills if s not in matched_skills]
+#     match_percentage = (len(matched_skills) / len(skills)) * 100 if skills else 0
+
+    
+#     # # Category analysis
+#     # category_analysis = {}
+#     # for category, category_skills in skills_by_category.items():
+#     #     if not category_skills:
+#     #         category_analysis[category] = {
+#     #             "matched": [],
+#     #             "unmatched": [],
+#     #             "match_percentage": 0
+#     #         }
+#     #         continue
+            
+#     #     matched = [skill for skill in category_skills if skill.lower() in resume_text.lower()]
+#     #     unmatched = [skill for skill in category_skills if skill.lower() not in resume_text.lower()]
+#     #     match_pct = (len(matched) / len(category_skills)) * 100 if category_skills else 0
+        
+#     #     category_analysis[category] = {
+#     #         "matched": matched,
+#     #         "unmatched": unmatched,
+#     #         "match_percentage": match_pct
+#     #     }
+
+#     # Build category_analysis from the AI result
+#     category_analysis = {}
+#     for category, category_skills in skills_by_category.items():
+#         matched   = [s for s in category_skills if s in matched_skills]
+#         unmatched = [s for s in category_skills if s in unmatched_skills]
+#         pct       = (len(matched)/len(category_skills))*100 if category_skills else 0
+#         category_analysis[category] = {
+#             "matched": matched,
+#             "unmatched": unmatched,
+#             "match_percentage": pct
+#         }
+        
+    
+#     # # Format skills for the prompt
+#     # skills_text = ""
+#     # for category, category_skills in skills_by_category.items():
+#     #     skills_text += f"{category}:\n"
+#     #     for skill in category_skills:
+#     #         match_status = "✓" if skill.lower() in resume_text.lower() else "✗"
+#     #         skills_text += f"- {match_status} {skill}\n"
+    
+#     # prompt = f"""
+#     # Analyze this resume against the required job skills:
+    
+#     # RESUME:
+#     # {resume_text}
+    
+#     # REQUIRED SKILLS:
+#     # {skills_text}
+    
+#     # Please provide a comprehensive and detailed analysis with:
+#     # 1. A brief overall assessment of how well the resume matches the job skills.
+#     # 2. A list of specific recommendations (1D array) to improve the match rate.
+#     # 3. A list of priority skills (1D array) that should be added or emphasized in the resume.
+#     # 4. A list of sections (1D array) in the resume that need improvement.
+#     # 5. ATS score (out of 100) based on matching relevance.
+
+#     # 1. Specific recommendations to improve match rate
+#     # 2. Priority skills to add or emphasize
+#     # 3. Sections that need improvement
+#     # 4. ATS Score should be out of 100 based on matching relevency.
+        
+#     # Format your response as JSON with these flat keys (no nested objects) as 1D array:
+#     # "overall_assessment", "recommendations", "priority_skills", "sections_to_improve", "ats_score"
+#     # """
+
+#     # Format skills into ✓/✗ using the AI match results
+#     skills_text = ""
+#     for cat, cat_skills in skills_by_category.items():
+#         skills_text += f"{cat}:\n"
+#         for skill in cat_skills:
+#             mark = "✓" if skill in matched_skills else "✗"
+#             skills_text += f"- {mark} {skill}\n"
+
+#     prompt = f"""
+#     You are an expert JD‐Based Resume Tuner AI. Analyze the candidate’s resume against the target job’s required skills and output one flat JSON object with these keys in exactly this order:
+    
+#       1. overall_assessment (string): 1–2 sentences on fit & gaps.  
+#       2. ats_score (integer): 0–100 based on keyword coverage, synonyms, placement, and section weight.  
+#       3. keyword_density (object): {"matched": int, "missing": int, "total_required": int}.  
+#       4. quick_fixes (array[string]): Top 3 bullet edits deliverable in < 5 minutes.  
+#       5. priority_skills (array[string]): Top 5 REQUIRED_SKILLS to highlight immediately.  
+#       6. missing_skills (array[string]): REQUIRED_SKILLS not mentioned at all.  
+#       7. recommendations (array[string]): Up to 5 medium-term resume rewrites—each flagged High/Med/Low impact.  
+#       8. sections_to_improve (array[string]): Exact sections to re-order or rewrite (e.g., "Summary," "Projects").  
+#       9. formatting_tips (array[string]): Filetype, layout, font-size, and ATS-friendly design suggestions.  
+#      10. redacted_items (array[string]): List of any PII scrubbed (full address, phone, personal email).  
+    
+#     Inputs (do not hallucinate—use only what’s provided):
+#       RESUME_TEXT:
+#       {resume_text}
+    
+#       REQUIRED_SKILLS:
+#       {skills_text}
+    
+#     Rules:
+#       • PII: Detect and redact street addresses, personal emails, and phone numbers; list them under "redacted_items."  
+#       • Synonyms: Treat common variants (e.g., "AWS" ↔ "Amazon Web Services") as matches for scoring.  
+#       • Scoring: Base ats_score on matched vs required keywords, their placement (heading vs body), and section weight (Skills > Experience > Education).  
+#       • Impact ranking: Label each recommendation as High/Med/Low based on lift in match rate.  
+#       • Output: Return only the JSON object—no extra text, no markdown, no nesting.  
+#     """
+
+    
+#     try:
+#         response = model.generate_content(prompt)
+#         analysis_text = response.text.strip()
+
+#         # Try to extract JSON        
+#         json_match = re.search(r'```json(.*?)```', analysis_text, re.DOTALL)
+#         if json_match:
+#             detailed_analysis = json.loads(json_match.group(1).strip())
+#         else:
+#             # If no JSON code block found, try parsing the entire response
+#             detailed_analysis = json.loads(analysis_text)        
+
+#     except:
+#         # Fallback in case of parsing issues
+#         detailed_analysis = {
+#             "overall_assessment": ["This is failsafe callback. Something failed. Check code."],
+#             "recommendations": ["Ensure your resume highlights relevant skills explicitly"],
+#             "priority_skills": [skill for skill in skills if skill not in matched_skills][:3],
+#             "sections_to_improve": ["Skills section", "Work experience"],
+#             "ats_score": ["NO ANALYSIS AVAILABLE - Failsafe Exception"]
+#         }
+    
+#     # ── strip markdown from every string in the JSON ──────────────────
+#     def _strip_md(txt: str) -> str:
+#         # remove **, `, _, ~~ common markdown
+#         return re.sub(r'(\*\*|`+|__?|~~)', '', txt)
+
+#     def _clean_md(obj):
+#         if isinstance(obj, str):
+#             return _strip_md(obj)
+#         if isinstance(obj, list):
+#             return [_clean_md(v) for v in obj]
+#         if isinstance(obj, dict):
+#             return {k: _clean_md(v) for k, v in obj.items()}
+#         return obj
+    
+#     detailed_analysis = _clean_md(detailed_analysis)
+
+#     # Emotion-based response (for backward compatibility)
+#     if match_percentage < 40:
+#         emotion = "😢 Needs improvement"
+#     elif match_percentage < 70:
+#         emotion = "😊 Good potential"
+#     else:
+#         emotion = "🎉 Excellent match!"
+    
+#     # return {
+#     #     "matched_skills": matched_skills,
+#     #     "unmatched_skills": [skill for skill in skills if skill not in matched_skills],
+#     #     "match_percentage": match_percentage,
+#     #     "emotion": emotion,
+#     #     "category_analysis": category_analysis,
+#     #     "detailed_analysis": detailed_analysis
+#     # }
+#     return {
+#         "matched_skills": matched_skills,
+#         "unmatched_skills": unmatched_skills,
+#         "match_percentage": match_percentage,
+#         "emotion": emotion,
+#         "category_analysis": category_analysis,
+#         "detailed_analysis": detailed_analysis
+#     }
+
+def analyze_resume(resume_text, job_description, skills, skills_by_category=None):
     """
     Enhanced resume analysis with matching by category and detailed feedback
     """
+    
+    # Comprehensive Gemini-based analysis
+    model = genai.GenerativeModel(geminimodel)
+
+    # 1) Extract requirements from the JD
+    requirements = [
+        line.strip(" \t-•*")
+        for line in job_description.splitlines()
+        if line.strip()
+    ]
+    
     # If skills_by_category is not provided, assume all skills are technical
     if skills_by_category is None:
         skills_by_category = {
@@ -536,79 +766,125 @@ def analyze_resume(resume_text, skills, skills_by_category=None):
             "Domain Knowledge": []
         }
     
-    # Basic skill matching for all skills
-    matched_skills = [skill for skill in skills if skill.lower() in resume_text.lower()]
-    match_percentage = (len(matched_skills) / len(skills)) * 100 if skills else 0
+    # ── AI-DRIVEN SKILL MATCHING ────────────────────────────────────────    
+
+    match_prompt = f"""
+    You are an expert resume-parser AI. Given a list of REQUIRED_SKILLS and a RESUME_TEXT, identify exactly which skills are present or clearly implied in the resume.  Handle synonyms, related terms, and context—do not just do substring checks.
     
-    # Category analysis
+    REQUIRED_SKILLS: {skills}
+    
+    RESUME_TEXT:
+    {resume_text}
+    
+    Return JSON ONLY, in this exact shape:
+    {{
+      "matched_skills": [...],    // skills from REQUIRED_SKILLS that are present/implied
+      "unmatched_skills": [...]   // the rest
+    }}
+    """   
+    try:
+        response = model.generate_content(match_prompt)
+        # print("AI raw response:", response.text)
+        raw = response.text.strip()
+        # Try to extract JSON        
+        m = re.search(r'```json(.*?)```', raw, re.DOTALL)        
+        match_json = json.loads(m.group(1).strip() if m else raw)
+              
+        matched_skills   = match_json.get("matched_skills", [])        
+        unmatched_skills = match_json.get("unmatched_skills", [])
+    except Exception as e:
+        print("⚠️ Skills AI parse failed:", e)  
+        matched_skills   = [s for s in skills if s.lower() in resume_text.lower()]
+        unmatched_skills = [s for s in skills if s not in matched_skills]
+    match_percentage = round((len(matched_skills) / len(skills)) * 100) if skills else 0
+
+    
+
+    # Build category_analysis from the AI result
     category_analysis = {}
     for category, category_skills in skills_by_category.items():
-        if not category_skills:
-            category_analysis[category] = {
-                "matched": [],
-                "unmatched": [],
-                "match_percentage": 0
-            }
-            continue
-            
-        matched = [skill for skill in category_skills if skill.lower() in resume_text.lower()]
-        unmatched = [skill for skill in category_skills if skill.lower() not in resume_text.lower()]
-        match_pct = (len(matched) / len(category_skills)) * 100 if category_skills else 0
-        
+        matched   = [s for s in category_skills if s in matched_skills]
+        unmatched = [s for s in category_skills if s in unmatched_skills]
+        pct       = round((len(matched)/len(category_skills))*100) if category_skills else 0
         category_analysis[category] = {
             "matched": matched,
             "unmatched": unmatched,
-            "match_percentage": match_pct
+            "match_percentage": pct
         }
     
-    # Comprehensive Gemini-based analysis
-    model = genai.GenerativeModel(geminimodel)
     
-    # Format skills for the prompt
+
+    # Format skills into ✓/✗ using the AI match results
     skills_text = ""
-    for category, category_skills in skills_by_category.items():
-        skills_text += f"{category}:\n"
-        for skill in category_skills:
-            match_status = "✓" if skill.lower() in resume_text.lower() else "✗"
-            skills_text += f"- {match_status} {skill}\n"
-    
+    for cat, cat_skills in skills_by_category.items():
+        skills_text += f"{cat}:\n"
+        for skill in cat_skills:
+            mark = "✓" if skill in matched_skills else "✗"
+            skills_text += f"- {mark} {skill}\n"
+
     prompt = f"""
-    Analyze this resume against the required job skills:
+    You are an expert JD‐Based Resume Tuner AI. Analyze the candidate’s resume against the target job’s required skills and output one flat JSON object with these keys in exactly this order:
     
-    RESUME:
-    {resume_text}
+      1. overall_assessment (string): 1–2 sentences on fit & gaps.  
+      2. ats_score (integer): 0–100 based on keyword coverage, synonyms, placement, and section weight.  
+      3. keyword_density (object): {{"matched": int, "missing": int, "total_required": int}}.
+      4. quick_fixes (array[string]): Top 3 bullet edits deliverable in < 5 minutes.  
+      5. priority_skills (array[string]): Top 5 REQUIRED_SKILLS to highlight immediately.  
+      6. missing_skills (array[string]): REQUIRED_SKILLS not mentioned at all.  
+      7. recommendations (array[string]): Up to 5 medium-term resume rewrites—each flagged High/Med/Low impact.  
+      8. sections_to_improve (array[string]): Exact sections to re-order or rewrite (e.g., "Summary," "Projects").  
+      9. formatting_tips (array[string]): Filetype, layout, font-size, and ATS-friendly design suggestions.     
     
-    REQUIRED SKILLS:
-    {skills_text}
+    Inputs (do not hallucinate—use only what’s provided):
+      RESUME_TEXT:
+      {resume_text}
     
-    Provide a detailed analysis with:
-    1. Specific recommendations to improve match rate
-    2. Priority skills to add or emphasize
-    3. Sections that need improvement
+      REQUIRED_SKILLS:
+      {skills_text}
     
-    Format your response as JSON with these keys: 
-    "recommendations", "priority_skills", "sections_to_improve"
+    Rules:      
+      • Synonyms: Treat common variants (e.g., "AWS" ↔ "Amazon Web Services") as matches for scoring.  
+      • Scoring: Base ats_score on matched vs required keywords, their placement (heading vs body), and section weight (Skills > Experience > Education).  
+      • Impact ranking: Label each recommendation as High/Med/Low based on lift in match rate.  
+      • Output: Return only the JSON object—no extra text, no markdown, no nesting.  
     """
-    
+
     try:
         response = model.generate_content(prompt)
         analysis_text = response.text.strip()
-        
-        # Try to extract JSON
+
+        # Try to extract JSON        
         json_match = re.search(r'```json(.*?)```', analysis_text, re.DOTALL)
         if json_match:
             detailed_analysis = json.loads(json_match.group(1).strip())
         else:
             # If no JSON code block found, try parsing the entire response
-            detailed_analysis = json.loads(analysis_text)
+            detailed_analysis = json.loads(analysis_text)        
+
     except:
         # Fallback in case of parsing issues
         detailed_analysis = {
+            "overall_assessment": ["This is failsafe callback. Something failed. Check code."],
             "recommendations": ["Ensure your resume highlights relevant skills explicitly"],
             "priority_skills": [skill for skill in skills if skill not in matched_skills][:3],
-            "sections_to_improve": ["Skills section", "Work experience"]
+            "sections_to_improve": ["Skills section", "Work experience"],
+            "ats_score": ["NO ANALYSIS AVAILABLE - Failsafe Exception"]
         }
+        
+    def _strip_md(txt: str) -> str:        
+        return re.sub(r'(\*\*|`+|__?|~~)', '', txt)
+
+    def _clean_md(obj):
+        if isinstance(obj, str):
+            return _strip_md(obj)
+        if isinstance(obj, list):
+            return [_clean_md(v) for v in obj]
+        if isinstance(obj, dict):
+            return {k: _clean_md(v) for k, v in obj.items()}
+        return obj
     
+    detailed_analysis = _clean_md(detailed_analysis)
+
     # Emotion-based response (for backward compatibility)
     if match_percentage < 40:
         emotion = "😢 Needs improvement"
@@ -616,14 +892,93 @@ def analyze_resume(resume_text, skills, skills_by_category=None):
         emotion = "😊 Good potential"
     else:
         emotion = "🎉 Excellent match!"
-    
+
+
+     # ── Requirement-by-Requirement Gap Analysis ─────────────────────
+    def check_requirement(req):
+        lower = resume_text.lower()
+        covered = req.lower() in lower
+        snippet = ""
+        if covered:
+            for sentence in resume_text.replace("\n"," ").split("."):
+                if req.lower() in sentence.lower():
+                    snippet = sentence.strip() + "."
+                    break
+        return {"requirement": req, "covered": covered, "matched_snippet": snippet}
+
+    requirement_analysis = [check_requirement(r) for r in requirements]
+
+    # ── Consolidated Semantic Suggestions via Gemini ─────────────
+    # … right before your “Consolidated Semantic Suggestions” block …
+    unmet = [
+        { "requirement": e["requirement"], "snippet": (e["matched_snippet"] or resume_text[:200]) }
+        for e in requirement_analysis
+        if not e["covered"]
+    ]
+
+    if unmet:
+        # dump it once into a string
+        unmet_json = json.dumps(unmet, indent=2)
+
+        suggestions_prompt = f"""
+            You are a resume-tuning assistant. You will be given a JSON array where each element has:
+              • requirement: the job requirement text  
+              • snippet: the best matching snippet (or empty) from the candidate's resume  
+
+            For each element, produce an object with:
+              - highlighted_terms: [terms in the snippet that miss the requirement’s intent]
+              - suggested_replacements: [aligned replacements]
+              - revised_snippet: the snippet with those replacements applied
+
+            Return *only* a JSON array of the same length, in the same order, for example:
+            ```json
+            [
+              {{
+                "highlighted_terms": [...],
+                "suggested_replacements": [...],
+                "revised_snippet": "..."
+              }},
+              …
+            ]
+            ```  
+            
+            Input:
+            ```json
+            {unmet_json}
+            ```
+            """
+        try:
+            sug_resp = model.generate_content(suggestions_prompt)
+            raw_sug  = sug_resp.text.strip()
+            m_sug    = re.search(r'```json(.*?)```', raw_sug, re.DOTALL)
+            sug_list = json.loads(m_sug.group(1).strip() if m_sug else raw_sug)        
+        except Exception:
+            # Fallback: empty suggestions
+            sug_list = [
+                { "highlighted_terms": [], "suggested_replacements": [], "revised_snippet": item["snippet"] }
+                for item in unmet
+            ]
+
+        # Merge back into requirement_analysis
+        it = iter(sug_list)
+        for entry in requirement_analysis:
+            if not entry["covered"]:
+                entry["suggestions"] = next(it)
+            else:
+                entry["suggestions"] = { "highlighted_terms": [], "suggested_replacements": [], "revised_snippet": entry["matched_snippet"] or "" }
+    else:
+        # no unmet requirements → all empty suggestions
+        for entry in requirement_analysis:
+            entry["suggestions"] = { "highlighted_terms": [], "suggested_replacements": [], "revised_snippet": entry["matched_snippet"] or "" }
+
     return {
         "matched_skills": matched_skills,
-        "unmatched_skills": [skill for skill in skills if skill not in matched_skills],
+        "unmatched_skills": unmatched_skills,
         "match_percentage": match_percentage,
         "emotion": emotion,
         "category_analysis": category_analysis,
-        "detailed_analysis": detailed_analysis
+        "detailed_analysis": detailed_analysis,
+        "requirement_analysis": requirement_analysis
     }
 
 def tailor_resume(resume_text, job_description):
@@ -678,8 +1033,12 @@ def analyze():
     resume_text = data.get('resume_text', '')
     skills = data.get('skills', [])
     skills_by_category = data.get('skills_by_category', None)
+    job_description = data.get('job_description', '')
     
-    analysis_result = analyze_resume(resume_text, skills, skills_by_category)
+    analysis_result = analyze_resume(resume_text, job_description, skills, skills_by_category)
+    
+    # print( json.dumps(analysis_result, indent=2) )
+
     return jsonify(analysis_result)
 
 @app.route('/tailor_resume', methods=['POST'])
