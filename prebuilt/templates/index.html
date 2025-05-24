@@ -324,7 +324,8 @@
                     <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                         <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Metrics Dashboard
                     </h2>
-                    <div id="metricsGauges" class="space-y-4"></div>
+                    <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+
                 </div>
 
 
@@ -936,25 +937,25 @@
 
             // Create or update charts
             createSkillMatchChart(data.matched_skills.length, data.unmatched_skills.length);
-            
+
             // after createSkillMatchChart(...)
             const detail = data.detailed_analysis || data;
             const raw = {
-                confidence_score       : detail.confidence_score,
-                assertiveness_level    : detail.assertiveness_level,
-                clarity                : detail.clarity,
-                emotional_intelligence : detail.emotional_intelligence,
-                customization_level    : detail.customization_level,
+                confidence_score: detail.confidence_score,
+                assertiveness_level: detail.assertiveness_level,
+                clarity: detail.clarity,
+                emotional_intelligence: detail.emotional_intelligence,
+                customization_level: detail.customization_level,
                 quantification_strength: detail.quantification_strength,
-                readability_score      : detail.readability_score,
-                grammar_accuracy       : detail.grammar_accuracy,
-                structure_coherence    : detail.structure_coherence,
-                conciseness            : detail.conciseness,
-                achievement_focus      : detail.achievement_focus,
-                leadership_emphasis    : detail.leadership_emphasis,
-                teamwork_emphasis      : detail.teamwork_emphasis,
-                metric_usage           : detail.metric_usage,
-                behavioral_score       : detail.behavioral_score
+                readability_score: detail.readability_score,
+                grammar_accuracy: detail.grammar_accuracy,
+                structure_coherence: detail.structure_coherence,
+                conciseness: detail.conciseness,
+                achievement_focus: detail.achievement_focus,
+                leadership_emphasis: detail.leadership_emphasis,
+                teamwork_emphasis: detail.teamwork_emphasis,
+                metric_usage: detail.metric_usage,
+                behavioral_score: detail.behavioral_score
             };
             renderAllMetrics(raw);
 
@@ -1278,23 +1279,19 @@
  * Renders one “gauge row” — either a doughnut (for 0–100 numbers)
  * or plain text (for strings).
  */
+        // new:
         function renderGauge(name, v, wrap) {
-            const row = document.createElement('div');
-            row.className = 'flex items-center justify-between';
+            // 1) card wrapper
+            const card = document.createElement('div');
+            card.className = 'flex flex-col items-center bg-gray-50 p-4 rounded-lg';
 
-            // label
-            const label = document.createElement('div');
-            label.className = 'font-medium text-gray-700';
-            label.textContent = name;
-            row.appendChild(label);
+            // 2) canvas for doughnut
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            card.appendChild(canvas);
 
-            // numeric → doughnut
+            const ctx = canvas.getContext('2d');
             if (typeof v === 'number' && !isNaN(v)) {
-                const canvas = document.createElement('canvas');
-                canvas.width = 48; canvas.height = 48;
-                row.appendChild(canvas);
-
-                const ctx = canvas.getContext('2d');
                 const rest = 100 - v;
                 const color = v < 40
                     ? 'rgba(255,99,132,0.8)'
@@ -1320,16 +1317,21 @@
                         }
                     }
                 });
-
-                // text → inline
             } else {
+                // fallback for text metrics
                 const txt = document.createElement('div');
                 txt.className = 'text-sm text-gray-600';
                 txt.textContent = String(v);
-                row.appendChild(txt);
+                card.appendChild(txt);
             }
 
-            wrap.appendChild(row);
+            // 3) label underneath
+            const label = document.createElement('div');
+            label.className = 'mt-2 text-sm font-medium text-gray-700 text-center';
+            label.textContent = name;
+            card.appendChild(label);
+
+            wrap.appendChild(card);
         }
 
         /**
