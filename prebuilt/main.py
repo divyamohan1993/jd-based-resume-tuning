@@ -841,6 +841,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
       24. leadership_emphasis (integer): 0-100 based on emphasis on leadership.  
       25. teamwork_emphasis (integer): 0-100 based on emphasis on teamwork.  
       26. metric_usage (integer): 0-100 based on frequency of metric usage.
+      27. behavioral_score (integer): 0-100 based on ratings for key matching traits and behaviour analysis from the user resume.
     
     Inputs (do not hallucinate—use only what’s provided):
       RESUME_TEXT:

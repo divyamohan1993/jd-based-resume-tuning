@@ -940,21 +940,21 @@
             // after createSkillMatchChart(...)
             const detail = data.detailed_analysis || data;
             const raw = {
-                confidence_score: detail.confidence_score,
-                readability_score: detail.readability_score,
-                assertiveness_level: mapCategory(detail.assertiveness_level),
-                clarity: mapCategory(detail.clarity),
-                emotional_intelligence: mapCategory(detail.emotional_intelligence),
-                customization_level: mapCategory(detail.customization_level),
-                quantification_strength: mapCategory(detail.quantification_strength),
-                grammar_accuracy: mapCategory(detail.grammar_accuracy),
-                structure_coherence: mapCategory(detail.structure_coherence),
-                conciseness: mapCategory(detail.conciseness),
-                achievement_focus: mapCategory(detail.achievement_focus),
-                leadership_emphasis: mapCategory(detail.leadership_emphasis),
-                teamwork_emphasis: mapCategory(detail.teamwork_emphasis),
-                metric_usage: mapCategory(detail.metric_usage),
-                behavioral_score: detail.behavioral_score
+                confidence_score       : detail.confidence_score,
+                assertiveness_level    : detail.assertiveness_level,
+                clarity                : detail.clarity,
+                emotional_intelligence : detail.emotional_intelligence,
+                customization_level    : detail.customization_level,
+                quantification_strength: detail.quantification_strength,
+                readability_score      : detail.readability_score,
+                grammar_accuracy       : detail.grammar_accuracy,
+                structure_coherence    : detail.structure_coherence,
+                conciseness            : detail.conciseness,
+                achievement_focus      : detail.achievement_focus,
+                leadership_emphasis    : detail.leadership_emphasis,
+                teamwork_emphasis      : detail.teamwork_emphasis,
+                metric_usage           : detail.metric_usage,
+                behavioral_score       : detail.behavioral_score
             };
             renderAllMetrics(raw);
 
