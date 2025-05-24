@@ -906,7 +906,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
         "match_percentage": match_percentage,
         "emotion": emotion,
         "category_analysis": category_analysis,
-        "detailed_analysis": detailed_analysis,        
+        "detailed_analysis": detailed_analysis       
     }
 
 def tailor_resume(resume_text, job_description):
