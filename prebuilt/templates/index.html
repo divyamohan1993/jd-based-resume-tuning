@@ -936,7 +936,7 @@
 
             // Create or update charts
             createSkillMatchChart(data.matched_skills.length, data.unmatched_skills.length);
-            renderMetricsDashboard(data);
+            renderMetricsDashboard(data.detailed_analysis || data);
         }
 
         function displayCategoryAnalysis(categoryAnalysis) {
@@ -1269,7 +1269,7 @@
         function renderMetricsDashboard(data) {
             // collect raw metrics
             const raw = {
-                confidence_score: (data.confidence_score != null ? data.confidence_score * 100 : null),
+                confidence_score: (data.confidence_score != null ? data.confidence_score : null),
                 readability_score: data.readability_score,
                 assertiveness_level: mapCategory(data.assertiveness_level),
                 clarity: mapCategory(data.clarity),
