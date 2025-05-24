@@ -67,6 +67,15 @@
         .card:hover {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+
+        /* tailwind-playable utility classes */
+        .metric-card {
+            @apply bg-white p-4 rounded-lg shadow hover:shadow-lg transition-transform;
+        }
+
+        .metric-card:hover {
+            @apply -translate-y-1;
+        }
     </style>
 </head>
 
@@ -320,11 +329,14 @@
                     <div id="requirementList" class="space-y-4"></div>
                 </div>
 
-                <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 card mb-8 hidden space-y-4">
+                <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 m-6 card mb-8 hidden space-y-6">
                     <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                         <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Metrics Dashboard
                     </h2>
                     <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+                    <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    </div>
+
 
                 </div>
 
@@ -1283,15 +1295,27 @@
         function renderGauge(name, v, wrap) {
             // 1) card wrapper
             const card = document.createElement('div');
-            card.className = 'flex flex-col items-center bg-gray-50 p-4 rounded-lg';
+            card.className = 'metric-card flex flex-col items-center';
 
-            // 2) canvas for doughnut
+            // 2) gauge + overlay container
+            const gaugeWrapper = document.createElement('div');
+            gaugeWrapper.className = 'relative w-16 h-16 mb-2';
+
+            // 3) canvas
             const canvas = document.createElement('canvas');
-            canvas.width = 64; canvas.height = 64;
-            card.appendChild(canvas);
+            canvas.width = 64;
+            canvas.height = 64;
+            gaugeWrapper.appendChild(canvas);
 
-            const ctx = canvas.getContext('2d');
+            // 4) overlay text
+            const overlay = document.createElement('div');
+            overlay.className = 'absolute inset-0 flex items-center justify-center text-sm font-semibold text-gray-800';
+            overlay.textContent = (typeof v === 'number') ? `${v}%` : String(v);
+            gaugeWrapper.appendChild(overlay);
+
+            // 5) draw doughnut
             if (typeof v === 'number' && !isNaN(v)) {
+                const ctx = canvas.getContext('2d');
                 const rest = 100 - v;
                 const color = v < 40
                     ? 'rgba(255,99,132,0.8)'
@@ -1304,35 +1328,29 @@
                     data: {
                         datasets: [{
                             data: [v, rest],
-                            backgroundColor: [color, '#e5e7eb'],
+                            backgroundColor: [color, '#f1f5f9'],
                             borderWidth: 0
                         }]
                     },
                     options: {
                         cutout: '70%',
                         responsive: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { enabled: false }
-                        }
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } }
                     }
                 });
-            } else {
-                // fallback for text metrics
-                const txt = document.createElement('div');
-                txt.className = 'text-sm text-gray-600';
-                txt.textContent = String(v);
-                card.appendChild(txt);
             }
 
-            // 3) label underneath
+            card.appendChild(gaugeWrapper);
+
+            // 6) metric label
             const label = document.createElement('div');
-            label.className = 'mt-2 text-sm font-medium text-gray-700 text-center';
+            label.className = 'text-sm text-gray-600 text-center';
             label.textContent = name;
             card.appendChild(label);
 
             wrap.appendChild(card);
         }
+
 
         /**
          * Takes your raw‐metrics object { confidence_score:95, … }
