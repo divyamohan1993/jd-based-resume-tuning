@@ -749,14 +749,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
     """
     
     # Comprehensive Gemini-based analysis
-    model = genai.GenerativeModel(geminimodel)
-
-    # 1) Extract requirements from the JD
-    requirements = [
-        line.strip(" \t-•*")
-        for line in job_description.splitlines()
-        if line.strip()
-    ]
+    model = genai.GenerativeModel(geminimodel)    
     
     # If skills_by_category is not provided, assume all skills are technical
     if skills_by_category is None:
@@ -767,7 +760,6 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
         }
     
     # ── AI-DRIVEN SKILL MATCHING ────────────────────────────────────────    
-
     match_prompt = f"""
     You are an expert resume-parser AI. Given a list of REQUIRED_SKILLS and a RESUME_TEXT, identify exactly which skills are present or clearly implied in the resume.  Handle synonyms, related terms, and context—do not just do substring checks.
     
@@ -812,8 +804,6 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
             "match_percentage": pct
         }
     
-    
-
     # Format skills into ✓/✗ using the AI match results
     skills_text = ""
     for cat, cat_skills in skills_by_category.items():
@@ -832,8 +822,25 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
       5. priority_skills (array[string]): Top 5 REQUIRED_SKILLS to highlight immediately.  
       6. missing_skills (array[string]): REQUIRED_SKILLS not mentioned at all.  
       7. recommendations (array[string]): Up to 5 medium-term resume rewrites—each flagged High/Med/Low impact.  
-      8. sections_to_improve (array[string]): Exact sections to re-order or rewrite (e.g., "Summary," "Projects").  
+      8. sections_to_improve (array[string]): Exact sections to re-order or rewrite (e.g., "Summary," "Projects") including details of what is missing.  
       9. formatting_tips (array[string]): Filetype, layout, font-size, and ATS-friendly design suggestions.     
+      10. action_verbs (array[string]): Identify and guide users on which lines to change to start with strong, dynamic verbs. 
+      11. confidence_score (integer): 0-100 indicating reliability of this analysis.  
+      12. tone (string): detected tone of the resume (e.g., professional, enthusiastic).  
+      13. behavioral_analysis (object): ratings for key traits, e.g. {{"leadership": string, "teamwork": string, "adaptability": string}}.  
+      14. assertiveness_level (string): level of assertiveness in language (High/Med/Low).  
+      15. clarity (string): level of clarity in descriptions (High/Med/Low).  
+      16. emotional_intelligence (string): presence of emotional intelligence cues (High/Med/Low).        
+      17. customization_level (string): degree of tailoring to the job (Tailored/Generic).  
+      18. quantification_strength (string): strength of numeric data usage (Strong/Med/Weak).  
+      19. readability_score (integer): readability score (0–100).  
+      20. grammar_accuracy (string): grammar accuracy status (Error-free/Minor issues/Major issues).  
+      21. structure_coherence (string): structural coherence status (Well-structured/Needs improvement).  
+      22. conciseness (string): conciseness evaluation (Concise/Verbose).  
+      23. achievement_focus (string): focus on achievements (Strong/Moderate/Weak).  
+      24. leadership_emphasis (string): emphasis on leadership (Strong/Moderate/Weak).  
+      25. teamwork_emphasis (string): emphasis on teamwork (Strong/Moderate/Weak).  
+      26. metric_usage (string): frequency of metric usage (High/Medium/Low).
     
     Inputs (do not hallucinate—use only what’s provided):
       RESUME_TEXT:
@@ -841,7 +848,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
     
       REQUIRED_SKILLS:
       {skills_text}
-    
+
     Rules:      
       • Synonyms: Treat common variants (e.g., "AWS" ↔ "Amazon Web Services") as matches for scoring.  
       • Scoring: Base ats_score on matched vs required keywords, their placement (heading vs body), and section weight (Skills > Experience > Education).  
@@ -892,93 +899,14 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
         emotion = "😊 Good potential"
     else:
         emotion = "🎉 Excellent match!"
-
-
-     # ── Requirement-by-Requirement Gap Analysis ─────────────────────
-    def check_requirement(req):
-        lower = resume_text.lower()
-        covered = req.lower() in lower
-        snippet = ""
-        if covered:
-            for sentence in resume_text.replace("\n"," ").split("."):
-                if req.lower() in sentence.lower():
-                    snippet = sentence.strip() + "."
-                    break
-        return {"requirement": req, "covered": covered, "matched_snippet": snippet}
-
-    requirement_analysis = [check_requirement(r) for r in requirements]
-
-    # ── Consolidated Semantic Suggestions via Gemini ─────────────
-    # … right before your “Consolidated Semantic Suggestions” block …
-    unmet = [
-        { "requirement": e["requirement"], "snippet": (e["matched_snippet"] or resume_text[:200]) }
-        for e in requirement_analysis
-        if not e["covered"]
-    ]
-
-    if unmet:
-        # dump it once into a string
-        unmet_json = json.dumps(unmet, indent=2)
-
-        suggestions_prompt = f"""
-            You are a resume-tuning assistant. You will be given a JSON array where each element has:
-              • requirement: the job requirement text  
-              • snippet: the best matching snippet (or empty) from the candidate's resume  
-
-            For each element, produce an object with:
-              - highlighted_terms: [terms in the snippet that miss the requirement’s intent]
-              - suggested_replacements: [aligned replacements]
-              - revised_snippet: the snippet with those replacements applied
-
-            Return *only* a JSON array of the same length, in the same order, for example:
-            ```json
-            [
-              {{
-                "highlighted_terms": [...],
-                "suggested_replacements": [...],
-                "revised_snippet": "..."
-              }},
-              …
-            ]
-            ```  
-            
-            Input:
-            ```json
-            {unmet_json}
-            ```
-            """
-        try:
-            sug_resp = model.generate_content(suggestions_prompt)
-            raw_sug  = sug_resp.text.strip()
-            m_sug    = re.search(r'```json(.*?)```', raw_sug, re.DOTALL)
-            sug_list = json.loads(m_sug.group(1).strip() if m_sug else raw_sug)        
-        except Exception:
-            # Fallback: empty suggestions
-            sug_list = [
-                { "highlighted_terms": [], "suggested_replacements": [], "revised_snippet": item["snippet"] }
-                for item in unmet
-            ]
-
-        # Merge back into requirement_analysis
-        it = iter(sug_list)
-        for entry in requirement_analysis:
-            if not entry["covered"]:
-                entry["suggestions"] = next(it)
-            else:
-                entry["suggestions"] = { "highlighted_terms": [], "suggested_replacements": [], "revised_snippet": entry["matched_snippet"] or "" }
-    else:
-        # no unmet requirements → all empty suggestions
-        for entry in requirement_analysis:
-            entry["suggestions"] = { "highlighted_terms": [], "suggested_replacements": [], "revised_snippet": entry["matched_snippet"] or "" }
-
+     
     return {
         "matched_skills": matched_skills,
         "unmatched_skills": unmatched_skills,
         "match_percentage": match_percentage,
         "emotion": emotion,
         "category_analysis": category_analysis,
-        "detailed_analysis": detailed_analysis,
-        "requirement_analysis": requirement_analysis
+        "detailed_analysis": detailed_analysis,        
     }
 
 def tailor_resume(resume_text, job_description):

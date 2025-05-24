@@ -320,6 +320,14 @@
                     <div id="requirementList" class="space-y-4"></div>
                 </div>
 
+                <!-- Metrics Dashboard -->
+                <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 card mb-8 hidden">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                        <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Metrics Dashboard
+                    </h2>
+                    <canvas id="metricsRadarChart"></canvas>
+                </div>
+
             </div>
 
             <!-- Category Analysis Section -->
@@ -697,10 +705,10 @@
             })
                 .then(response => {
                     if (!response.ok) {
-                      throw new Error(`Server returned ${response.status}`);
+                        throw new Error(`Server returned ${response.status}`);
                     }
                     return response.json();
-                  })
+                })
                 .then(data => {
                     console.log("🚀 analyze_resume returned:", data);
                     displayAnalysis(data);
@@ -928,6 +936,7 @@
 
             // Create or update charts
             createSkillMatchChart(data.matched_skills.length, data.unmatched_skills.length);
+            renderMetricsDashboard(data);
         }
 
         function displayCategoryAnalysis(categoryAnalysis) {
@@ -1243,6 +1252,91 @@
                 }
             });
         }
+
+        // Utility: map category strings to numeric scores
+        function mapCategory(val) {
+            if (typeof val !== 'string') return null;
+            const m = val.toLowerCase();
+            if (m === 'high' || m === 'strong' || m === 'tailored' || m === 'error-free' || m === 'well-structured' || m === 'concise') return 3;
+            if (m === 'med' || m === 'medium' || m === 'moderate') return 2;
+            if (m === 'low' || m === 'weak' || m === 'generic' || m === 'major issues' || m === 'needs improvement' || m === 'verbose') return 1;
+            return null;
+        }
+
+
+
+        let metricsRadarChart = null;
+        function renderMetricsDashboard(data) {
+            // collect raw metrics
+            const raw = {
+                confidence_score: (data.confidence_score != null ? data.confidence_score * 100 : null),
+                readability_score: data.readability_score,
+                assertiveness_level: mapCategory(data.assertiveness_level),
+                clarity: mapCategory(data.clarity),
+                emotional_intelligence: mapCategory(data.emotional_intelligence),
+                customization_level: mapCategory(data.customization_level),
+                quantification_strength: mapCategory(data.quantification_strength),
+                grammar_accuracy: mapCategory(data.grammar_accuracy),
+                structure_coherence: mapCategory(data.structure_coherence),
+                conciseness: mapCategory(data.conciseness),
+                achievement_focus: mapCategory(data.achievement_focus),
+                leadership_emphasis: mapCategory(data.leadership_emphasis),
+                teamwork_emphasis: mapCategory(data.teamwork_emphasis),
+                metric_usage: mapCategory(data.metric_usage),
+                // behavioral_analysis is an object of strings: average its mapped values
+                behavioral_score: Array.isArray(data.behavioral_analysis)
+                    ? data.behavioral_analysis.map(item => mapCategory(item)).filter(v => v != null).reduce((a, b) => a + b, 0) / Object.keys(data.behavioral_analysis).length
+                    : (data.behavioral_analysis && typeof data.behavioral_analysis === 'object'
+                        ? Object.values(data.behavioral_analysis).map(v => mapCategory(v)).filter(v => v != null).reduce((a, b) => a + b, 0)
+                        / Object.values(data.behavioral_analysis).length
+                        : null)
+            };
+
+            // filter out nulls
+            const labels = [], values = [];
+            for (let [k, v] of Object.entries(raw)) {
+                if (typeof v === 'number' && !isNaN(v)) {
+                    labels.push(k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
+                    values.push(Number(v.toFixed(1)));
+                }
+            }
+            if (!labels.length) return;
+
+            // show container
+            document.getElementById('metricsDashboardContainer').classList.remove('hidden');
+
+            const ctx = document.getElementById('metricsRadarChart').getContext('2d');
+            if (metricsRadarChart) metricsRadarChart.destroy();
+            metricsRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Resume Metrics',
+                        data: values,
+                        fill: true,
+                        pointBackgroundColor: 'rgba(75,192,192,1)',
+                        backgroundColor: 'rgba(75,192,192,0.2)',
+                        borderColor: 'rgba(75,192,192,1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100,           // allow large numeric like confidence_score(%)
+                            ticks: { stepSize: 20 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+        }
+
     </script>
 </body>
 
