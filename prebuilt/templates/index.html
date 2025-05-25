@@ -406,7 +406,7 @@
                     <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
                         <!-- ATS Score Gauge -->
-                        <div class="relative w-24 h-24">
+                        <div class="canvas-container w-full max-w-xs hidden">
                             <canvas id="atsScoreChart"></canvas>
                             <div id="atsScoreText"
                                 class="absolute inset-0 flex items-center justify-center text-lg font-semibold text-yellow-600">
@@ -1304,52 +1304,52 @@
             createAtsScoreChart(analysis.ats_score);
         }
 
-        function createSkillMatchChart(matched, unmatched) {
-            const ctx = document.getElementById('skillChart').getContext('2d');
+        // function createSkillMatchChart(matched, unmatched) {
+        //     const ctx = document.getElementById('skillChart').getContext('2d');
 
-            // Destroy previous chart if it exists
-            if (mySkillChart) {
-                mySkillChart.destroy();
-            }
+        //     // Destroy previous chart if it exists
+        //     if (mySkillChart) {
+        //         mySkillChart.destroy();
+        //     }
 
-            mySkillChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Matched Skills', 'Missing Skills'],
-                    datasets: [{
-                        data: [matched, unmatched],
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(255, 99, 132, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(255, 99, 132, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
+        //     mySkillChart = new Chart(ctx, {
+        //         type: 'doughnut',
+        //         data: {
+        //             labels: ['Matched Skills', 'Missing Skills'],
+        //             datasets: [{
+        //                 data: [matched, unmatched],
+        //                 backgroundColor: [
+        //                     'rgba(75, 192, 192, 0.8)',
+        //                     'rgba(255, 99, 132, 0.8)'
+        //                 ],
+        //                 borderColor: [
+        //                     'rgba(75, 192, 192, 1)',
+        //                     'rgba(255, 99, 132, 1)'
+        //                 ],
+        //                 borderWidth: 1
+        //             }]
+        //         },
+        //         options: {
+        //             responsive: true,
+        //             plugins: {
+        //                 legend: {
+        //                     position: 'top'
+        //                 },
+        //                 tooltip: {
+        //                     callbacks: {
+        //                         label: function (context) {
+        //                             const label = context.label || '';
+        //                             const value = context.raw || 0;
+        //                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
+        //                             const percentage = Math.round((value / total) * 100);
+        //                             return `${label}: ${value} (${percentage}%)`;
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     });
+        // }
 
         function displayRequirementAnalysis(list) {
             const container = document.getElementById('requirementList');
@@ -1395,16 +1395,86 @@
         }
 
 
+        // function createAtsScoreChart(score) {
+        //     const ctx = document.getElementById('atsScoreChart').getContext('2d');
+        //     // destroy old chart if present
+        //     if (window.atsChart) window.atsChart.destroy();
+
+        //     // pick a color by threshold
+        //     let color;
+        //     if (score < 40) color = 'rgba(255, 99, 132, 0.8)';  // red
+        //     else if (score < 70) color = 'rgba(255, 205, 86, 0.8)';  // yellow
+        //     else color = 'rgba(75, 192, 192, 0.8)'; // green
+
+        //     window.atsChart = new Chart(ctx, {
+        //         type: 'doughnut',
+        //         data: {
+        //             datasets: [{
+        //                 data: [score, 100 - score],
+        //                 backgroundColor: [color, '#e5e7eb'],
+        //                 borderWidth: 0,
+        //             }]
+        //         },
+        //         options: {
+        //             cutout: '75%',
+        //             responsive: true,
+        //             plugins: {
+        //                 legend: { display: false },
+        //                 tooltip: { enabled: false }
+        //             }
+        //         }
+        //     });
+
+        //     // update the overlay text
+        //     document.getElementById('atsScoreText').textContent = `${score}%`;
+        // }
+
+
+        function createSkillMatchChart(matched, unmatched) {
+            const ctx = document.getElementById('skillChart').getContext('2d');
+            if (mySkillChart) mySkillChart.destroy();
+
+            mySkillChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Matched Skills', 'Missing Skills'],
+                    datasets: [{
+                        data: [matched, unmatched],
+                        backgroundColor: ['rgba(75, 192, 192, 0.8)', 'rgba(255, 99, 132, 0.8)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label(ctx) {
+                                    const val = ctx.raw || 0;
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = Math.round(val / total * 100);
+                                    return `${ctx.label}: ${val} (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         function createAtsScoreChart(score) {
             const ctx = document.getElementById('atsScoreChart').getContext('2d');
-            // destroy old chart if present
             if (window.atsChart) window.atsChart.destroy();
 
             // pick a color by threshold
-            let color;
-            if (score < 40) color = 'rgba(255, 99, 132, 0.8)';  // red
-            else if (score < 70) color = 'rgba(255, 205, 86, 0.8)';  // yellow
-            else color = 'rgba(75, 192, 192, 0.8)'; // green
+            let color = score < 40
+                ? 'rgba(255, 99, 132, 0.8)'
+                : score < 70
+                    ? 'rgba(255, 205, 86, 0.8)'
+                    : 'rgba(75, 192, 192, 0.8)';
 
             window.atsChart = new Chart(ctx, {
                 type: 'doughnut',
@@ -1412,12 +1482,13 @@
                     datasets: [{
                         data: [score, 100 - score],
                         backgroundColor: [color, '#e5e7eb'],
-                        borderWidth: 0,
+                        borderWidth: 0
                     }]
                 },
                 options: {
-                    cutout: '75%',
                     responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
                     plugins: {
                         legend: { display: false },
                         tooltip: { enabled: false }
@@ -1425,9 +1496,9 @@
                 }
             });
 
-            // update the overlay text
             document.getElementById('atsScoreText').textContent = `${score}%`;
         }
+
 
 
         function createCategoryChart(canvasId, matched, unmatched, percentage) {
