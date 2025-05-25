@@ -207,11 +207,11 @@
     </style>
 
     <style>
-  #detailedAnalysisContainer table tr:hover {
-    background-color: #fffbe6;
-    transition: background-color 0.3s ease;
-  }
-</style>
+        #detailedAnalysisContainer table tr:hover {
+            background-color: #fffbe6;
+            transition: background-color 0.3s ease;
+        }
+    </style>
 
 
 </head>
@@ -448,6 +448,54 @@
                     </div>
                 </div>
 
+                <div id="bothchartsinside" class="hidden grid lg:grid-cols-3 gap-8 mb-16 font-[Lora]">
+
+                    <!-- ATS Compatibility -->
+                    <div
+                        class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
+                        <div class="w-full">
+                            <canvas id="atsScoreChart"></canvas>
+                            <div id="atsScoreText"
+                                class="absolute inset-0 flex items-center justify-center text-lg font-semibold text-yellow-600">
+                            </div>
+                        </div>
+                        <p class="text-center text-gray-700 text-sm">
+                            <span class="font-semibold text-yellow-700">ATS Compatibility</span><br>
+                            An estimate of how well your resume passes automated filters (formatting, keywords,
+                            structure).
+                        </p>
+                    </div>
+
+                    <!-- Skill Match -->
+                    <div
+                        class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
+                        <div id="skillChartContainer" class="relative w-full">
+                            <canvas id="skillChart"></canvas>
+                        </div>
+                        <p class="text-center text-gray-700 text-sm">
+                            <span class="font-semibold text-yellow-700">Skill Match</span><br>
+                            Visualizes how many of the JD’s key skills you already have versus those you’re missing.
+                        </p>
+                    </div>
+
+                    <!-- Overall Match -->
+                    <div
+                        class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
+                        <div class="relative w-full">
+                            <canvas id="overallMatchChart"></canvas>
+                            <div id="overallMatchText"
+                                class="absolute inset-0 flex items-center justify-center text-lg font-semibold text-yellow-600">
+                            </div>
+                        </div>
+                        <p class="text-center text-gray-700 text-sm">
+                            <span class="font-semibold text-yellow-700">Overall Match</span><br>
+                            Combines both skill overlap and ATS factors into one single “how well you match” score.
+                        </p>
+                    </div>
+
+                </div>
+
+
 
                 <!-- Matched and Unmatched Skills side by side
                 <div id="matchedSkillsContainer" class="hidden w-full mb-6">
@@ -588,67 +636,67 @@
                 </div> -->
 
                 <!-- Detailed Analysis in Tabular Format -->
-<div id="detailedAnalysisContainer" class="w-full max-w-4xl hidden mx-auto font-[Lora]">
-  <h3 class="text-2xl font-semibold mb-6 text-center text-yellow-600"
-      style="font-family: 'Playfair Display', serif;">
-    Detailed Resume Analysis
-  </h3>
+                <div id="detailedAnalysisContainer" class="w-full max-w-4xl hidden mx-auto font-[Lora]">
+                    <h3 class="text-2xl font-semibold mb-6 text-center text-yellow-600"
+                        style="font-family: 'Playfair Display', serif;">
+                        Detailed Resume Analysis
+                    </h3>
 
-  <div class="overflow-hidden rounded-xl border-l-4 border-yellow-500 shadow-xl bg-white">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-yellow-50">
-        <tr>
-          <th scope="col"
-              class="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider"
-              style="font-family: 'Playfair Display', serif;">
-            Category
-          </th>
-          <th scope="col"
-              class="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider"
-              style="font-family: 'Playfair Display', serif;">
-            Details
-          </th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-100 text-sm text-gray-700">
+                    <div class="overflow-hidden rounded-xl border-l-4 border-yellow-500 shadow-xl bg-white">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-yellow-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider"
+                                        style="font-family: 'Playfair Display', serif;">
+                                        Category
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider"
+                                        style="font-family: 'Playfair Display', serif;">
+                                        Details
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-100 text-sm text-gray-700">
 
-        <tr>
-          <td class="px-6 py-4 font-medium text-indigo-600">Overall Assessment</td>
-          <td class="px-6 py-4" id="overallAssessment"></td>
-        </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-medium text-indigo-600">Overall Assessment</td>
+                                    <td class="px-6 py-4" id="overallAssessment"></td>
+                                </tr>
 
-        <tr class="bg-gray-50">
-          <td class="px-6 py-4 font-medium text-indigo-600">Priority Skills to Add</td>
-          <td class="px-6 py-4">
-            <ul id="prioritySkillsList" class="list-disc pl-5 space-y-1"></ul>
-          </td>
-        </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-indigo-600">Priority Skills to Add</td>
+                                    <td class="px-6 py-4">
+                                        <ul id="prioritySkillsList" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
 
-        <tr>
-          <td class="px-6 py-4 font-medium text-indigo-600">Quick Fixes</td>
-          <td class="px-6 py-4">
-            <ul id="quickFixes" class="list-disc pl-5 space-y-1"></ul>
-          </td>
-        </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-medium text-indigo-600">Quick Fixes</td>
+                                    <td class="px-6 py-4">
+                                        <ul id="quickFixes" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
 
-        <tr class="bg-gray-50">
-          <td class="px-6 py-4 font-medium text-indigo-600">Recommendations</td>
-          <td class="px-6 py-4">
-            <ul id="recommendationsList" class="list-disc pl-5 space-y-1"></ul>
-          </td>
-        </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-indigo-600">Recommendations</td>
+                                    <td class="px-6 py-4">
+                                        <ul id="recommendationsList" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
 
-        <tr>
-          <td class="px-6 py-4 font-medium text-indigo-600">Sections to Improve</td>
-          <td class="px-6 py-4">
-            <ul id="sectionsToImproveList" class="list-disc pl-5 space-y-1"></ul>
-          </td>
-        </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-medium text-indigo-600">Sections to Improve</td>
+                                    <td class="px-6 py-4">
+                                        <ul id="sectionsToImproveList" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
 
-      </tbody>
-    </table>
-  </div>
-</div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
 
                 <!-- Requirement Gap Analysis -->
@@ -1236,6 +1284,7 @@
 
             // Create or update charts
             createSkillMatchChart(data.matched_skills.length, data.unmatched_skills.length);
+            createOverallMatchChart(Math.round(data.match_percentage));
 
             // after createSkillMatchChart(...)
             const detail = data.detailed_analysis || data;
@@ -1512,6 +1561,41 @@
             // update the overlay text
             document.getElementById('atsScoreText').textContent = `${score}%`;
         }
+
+        function createOverallMatchChart(score) {
+            const ctx = document.getElementById('overallMatchChart').getContext('2d');
+            // destroy old if present
+            if (window.overallChart) window.overallChart.destroy();
+
+            // choose color by threshold
+            let color;
+            if (score < 40) color = 'rgba(255, 99, 132, 0.8)';   // red
+            else if (score < 70) color = 'rgba(255, 205, 86, 0.8)';  // yellow
+            else color = 'rgba(75, 192, 192, 0.8)'; // green
+
+            window.overallChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [score, 100 - score],
+                        backgroundColor: [color, '#e5e7eb'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '75%',
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+
+            // update the overlay text
+            document.getElementById('overallMatchText').textContent = `${score}%`;
+        }
+
 
 
         function createCategoryChart(canvasId, matched, unmatched, percentage) {
