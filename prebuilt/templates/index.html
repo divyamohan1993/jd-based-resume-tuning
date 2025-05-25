@@ -130,7 +130,7 @@
         nav:hover {
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             transition: box-shadow 0.3s ease-in-out;
-        }    
+        }
     </style>
 </head>
 
@@ -173,7 +173,7 @@
         </div>
     </nav> -->
 
-    <nav class="bg-gradient-to-r from-black via-gray-900 to-yellow-900 shadow-lg w-full border-b border-yellow-600">
+    <nav class="bg-gradient-to-b from-black via-gray-900 to-yellow-900 shadow-lg w-full border-b border-yellow-600">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
 
             <!-- Left Logo + Title -->
@@ -198,7 +198,7 @@
         <!-- Input Section - Top Row with Job Description and Resume side by side -->
         <div class="grid lg:grid-cols-2 gap-8 mb-8">
             <!-- Job Description Section -->
-            <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
+            <!-- <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
                 <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                     <i class="fas fa-briefcase mr-2 text-blue-600"></i>Job Description
                 </h2>
@@ -227,10 +227,10 @@
                     </div>
                     <p class="mt-2 text-blue-600">Extracting skills...</p>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Resume Upload Section -->
-            <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
+            <!-- <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
                 <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                     <i class="fas fa-file-alt mr-2 text-purple-600"></i>Your Resume
                 </h2>
@@ -258,7 +258,83 @@
                     </div>
                     <p class="mt-2 text-purple-600">Processing resume...</p>
                 </div>
+            </div> -->
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
+
+                <!-- Job Description Section -->
+                <div
+                    class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500">
+                    <h2 class="text-2xl font-semibold mb-4 flex items-center text-gray-800"
+                        style="font-family: 'Playfair Display', serif;">
+                        <i class="fas fa-briefcase mr-3 text-yellow-600"></i> Job Description
+                    </h2>
+                    <p class="text-gray-600 mb-4 text-sm">
+                        Paste the job description to identify key skills and requirements.
+                    </p>
+                    <textarea id="jobDescription"
+                        class="w-full text-area-tall p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-600 transition duration-300 text-gray-700"
+                        placeholder="Paste job description here..."></textarea>
+
+                    <button id="extractSkillsBtn"
+                        class="mt-4 w-full bg-yellow-600 text-white py-3 rounded-xl hover:bg-yellow-700 transition duration-300 flex items-center justify-center font-semibold hidden">
+                        <i class="fas fa-magic mr-2"></i>Extract Skills
+                    </button>
+
+                    <div id="skillsTable" class="mt-4 hidden">
+                        <h3 class="text-lg font-semibold mb-2 text-gray-800">Key Skills</h3>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <div id="categorySkills" class="mb-4"></div>
+                            <h4 class="font-medium mb-2 text-gray-700">All Skills</h4>
+                            <ul id="skillsList" class="list-disc pl-5 space-y-1 text-gray-600 text-sm"></ul>
+                        </div>
+                    </div>
+
+                    <div id="loadingSkills" class="mt-4 text-center hidden">
+                        <div
+                            class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-600">
+                        </div>
+                        <p class="mt-2 text-yellow-600">Extracting skills...</p>
+                    </div>
+                </div>
+
+                <!-- Resume Upload Section -->
+                <div
+                    class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500">
+                    <h2 class="text-2xl font-semibold mb-4 flex items-center text-gray-800"
+                        style="font-family: 'Playfair Display', serif;">
+                        <i class="fas fa-file-alt mr-3 text-yellow-600"></i> Your Resume
+                    </h2>
+                    <p class="text-gray-600 mb-4 text-sm">
+                        Upload your resume or paste the content to analyze it against the job requirements.
+                    </p>
+
+                    <label
+                        class="flex flex-col border-2 border-dashed border-yellow-300 hover:bg-yellow-50 hover:border-yellow-500 p-6 text-center rounded-xl transition duration-300 cursor-pointer mb-4">
+                        <div class="flex flex-col items-center justify-center">
+                            <i
+                                class="fas fa-cloud-upload-alt text-4xl text-yellow-400 group-hover:text-yellow-600 transition duration-300"></i>
+                            <p class="text-sm text-yellow-500 group-hover:text-yellow-600 mt-2 transition duration-300">
+                                Upload PDF or DOCX
+                            </p>
+                        </div>
+                        <input type="file" class="hidden" id="resumeUpload" accept=".pdf,.docx" />
+                    </label>
+
+                    <textarea id="resumeText"
+                        class="w-full text-area-tall p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-600 transition duration-300 text-gray-700"
+                        placeholder="Or paste resume text here..."></textarea>
+
+                    <div id="loadingResume" class="mt-4 text-center hidden">
+                        <div
+                            class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-600">
+                        </div>
+                        <p class="mt-2 text-yellow-600">Processing resume...</p>
+                    </div>
+                </div>
+
             </div>
+
         </div>
 
         <!-- Analysis Section - Middle Row -->
