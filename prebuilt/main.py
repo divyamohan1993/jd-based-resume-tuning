@@ -1014,8 +1014,8 @@ def upload_resume():
 def analyze():
     data = request.get_json()
     resume_text = sanitize_input(data.get('resume_text', ''))
-    skills = sanitize_input(data.get('skills', []))
-    skills_by_category = sanitize_input(data.get('skills_by_category', None))
+    skills = data.get('skills', [])
+    skills_by_category = data.get('skills_by_category', None)
     job_description = sanitize_input(data.get('job_description', ''))
     
     analysis_result = analyze_resume(resume_text, job_description, skills, skills_by_category)
