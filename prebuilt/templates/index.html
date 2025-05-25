@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -105,8 +107,7 @@
 
 <body class="bg-gradient-to-br from-red-50 to-gray-200 min-h-screen">
 
-    <section id="hero" class="h-screen relative flex items-center justify-center bg-black text-white overflow-hidden">
-        <!-- slight dark overlay -->
+    <!-- <section id="hero" class="h-screen relative flex items-center justify-center bg-black text-white overflow-hidden">
         <div class="absolute inset-0 bg-black opacity-30"></div>
 
         <div class="relative z-10 px-4 text-center">
@@ -118,7 +119,29 @@
                 Get Started
             </a>
         </div>
-    </section>
+    </section>-->
+
+    <section id="hero" class="h-screen relative flex items-center justify-center bg-black text-white overflow-hidden">
+
+  <!-- Animated Gold Particles -->
+  <div id="luxury-bg" class="absolute inset-0 z-0"></div>
+
+  <!-- Dark Overlay -->
+  <div class="absolute inset-0 bg-black opacity-30 z-10"></div>
+
+  <!-- Foreground Content -->
+  <div class="relative z-20 px-4 text-center">
+    <img class="img-fluid my-5 mx-auto max-h-20" src="https://shooliniuniversity.com/assets/images/logo.png" />
+    <h1 class="text-6xl md:text-8xl font-bold tracking-wide text-yellow-300">SURAT</h1>
+    <p class="mt-4 text-xl md:text-2xl text-yellow-100">Shoolini University Resume Analyzer &amp; Tuner</p>
+    <a href="#allstartshere"
+      class="mt-8 inline-block px-6 py-3 bg-white text-yellow-800 font-semibold rounded-lg shadow-lg hover:bg-yellow-100 transition">
+      Get Started
+    </a>
+  </div>
+
+</section>
+
 
     <nav class="bg-red-600 shadow-md w-full">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -1371,6 +1394,39 @@
 
 
     </script>
+
+
+<script>
+  particlesJS('luxury-bg', {
+    "particles": {
+      "number": { "value": 60 },
+      "color": { "value": "#d4af37" },
+      "shape": { "type": "circle" },
+      "opacity": { "value": 0.5 },
+      "size": { "value": 4 },
+      "line_linked": {
+        "enable": true,
+        "distance": 120,
+        "color": "#d4af37",
+        "opacity": 0.4,
+        "width": 1
+      },
+      "move": {
+        "enable": true,
+        "speed": 1.5,
+        "direction": "none",
+        "out_mode": "out"
+      }
+    },
+    "interactivity": {
+      "events": {
+        "onhover": { "enable": true, "mode": "repulse" }
+      }
+    },
+    "retina_detect": true
+  });
+</script>
+
 </body>
 
 </html>
