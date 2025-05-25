@@ -193,71 +193,7 @@
     </nav>
 
 
-    <div class="container mx-auto px-4 py-8 main-container" id="allstartshere">
-
-        <!-- Input Section - Top Row with Job Description and Resume side by side -->
-        <div class="grid lg:grid-cols-2 gap-8 mb-8">
-            <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
-                <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-                    <i class="fas fa-briefcase mr-2 text-blue-600"></i>Job Description
-                </h2>
-                <p class="text-gray-600 mb-4 text-sm">
-                    Paste the job description to identify key skills and requirements.
-                </p>
-                <textarea id="jobDescription"
-                    class="w-full text-area-tall p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 text-gray-700"
-                    placeholder="Paste job description here..."></textarea>
-
-                <button id="extractSkillsBtn"
-                    class="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center font-medium hidden">
-                    <i class="fas fa-magic mr-2"></i>Extract Skills
-                </button>
-
-                <div id="skillsTable" class="mt-4 max-height-box hidden">
-                    <h3 class="text-lg font-medium mb-2 text-gray-800">Key Skills</h3>
-                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div id="categorySkills" class="mb-4"></div>
-                        <h4 class="font-medium mb-2 text-gray-700">All Skills</h4>
-                        <ul id="skillsList" class="list-disc pl-5 space-y-1 text-gray-600"></ul>
-                    </div>
-                </div>
-                <div id="loadingSkills" class="mt-4 text-center hidden">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600">
-                    </div>
-                    <p class="mt-2 text-blue-600">Extracting skills...</p>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
-                <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-                    <i class="fas fa-file-alt mr-2 text-purple-600"></i>Your Resume
-                </h2>
-                <p class="text-gray-600 mb-4 text-sm">
-                    Upload your resume or paste the content to analyze it against the job requirements.
-                </p>
-                <div class="flex items-center justify-center w-full mb-4">
-                    <label
-                        class="flex flex-col border-2 border-dashed border-gray-300 hover:bg-gray-50 hover:border-purple-400 w-full p-6 group text-center rounded-lg transition duration-300 cursor-pointer">
-                        <div class="flex flex-col items-center justify-center">
-                            <i
-                                class="fas fa-cloud-upload-alt text-4xl text-gray-400 group-hover:text-purple-600 transition duration-300"></i>
-                            <p class="text-sm text-gray-500 group-hover:text-purple-600 mt-2 transition duration-300">
-                                Upload PDF or DOCX
-                            </p>
-                        </div>
-                        <input type="file" class="hidden" id="resumeUpload" accept=".pdf,.docx" />
-                    </label>
-                </div>
-                <textarea id="resumeText"
-                    class="w-full text-area-tall p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 text-gray-700"
-                    placeholder="Or paste resume text here..."></textarea>
-                <div id="loadingResume" class="mt-4 text-center hidden">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-600">
-                    </div>
-                    <p class="mt-2 text-purple-600">Processing resume...</p>
-                </div>
-            </div>
-        </div>
+    <div class="container mx-auto px-4 py-8 main-container" id="allstartshere">     
 
         <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
 
@@ -311,7 +247,7 @@
                     </p>
 
                     <label
-                        class="flex flex-col border-2 border-dashed border-yellow-300 hover:bg-yellow-50 hover:border-yellow-500 p-6 text-center rounded-xl transition duration-300 cursor-pointer mb-4">
+                        class="flex flex-col border-2 border-dashed border-yellow-300 hover:bg-yellow-50 hover:border-yellow-500 p-12 text-center rounded-xl transition duration-300 cursor-pointer mb-4">
                         <div class="flex flex-col items-center justify-center">
                             <i
                                 class="fas fa-cloud-upload-alt text-4xl text-yellow-400 group-hover:text-yellow-600 transition duration-300"></i>

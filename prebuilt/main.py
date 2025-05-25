@@ -31,74 +31,67 @@ geminimodel = "gemini-2.5-flash-preview-05-20"
 
 def extract_text_from_file(file):
     """
-    Extract text from uploaded file (PDF or DOCX)
+    Extract text from uploaded file (PDF or DOCX) and then normalize spacing & lists.
     """
-    # Get file extension from filename
+    def normalize_extracted_text(text: str) -> str:
+        """Preserve bullets, join soft-wrapped lines, collapse blanks."""
+        lines = text.splitlines()
+        out = []
+        for ln in lines:
+            stripped = ln.strip()
+            if not stripped:
+                # collapse multiple blanks into one
+                if out and out[-1] != "":
+                    out.append("")
+                continue
+            # list item?
+            if stripped.startswith(("-", "*", "•", "–")):
+                out.append(stripped)
+                continue
+            # continuation of previous paragraph?
+            if out and out[-1] and not re.search(r"[\.:\?!]$", out[-1]):
+                out[-1] = out[-1] + " " + stripped
+            else:
+                out.append(stripped)
+        return "\n".join(out).strip()
+
     filename = file.filename.lower()
-    
+    raw = ""
+    # try MIME
     try:
-        # Detect file type using python-magic
         mime = magic.Magic(mime=True)
         file_mime = mime.from_buffer(file.read(2048))
-        file.seek(0)  # Reset file pointer
-        
+        file.seek(0)
         if 'pdf' in filename or file_mime == 'application/pdf':
-            # PDF extraction
+            reader = PyPDF2.PdfReader(file)
+            for p in reader.pages:
+                raw += p.extract_text() or ""
+        elif 'docx' in filename or 'officedocument.wordprocessingml.document' in file_mime:
             try:
-                pdf_reader = PyPDF2.PdfReader(file)
-                text = ""
-                for page in pdf_reader.pages:
-                    text += page.extract_text() or ""  # Handle None returns
-                return text
-            except Exception as e:
-                raise ValueError(f"Error processing PDF: {str(e)}")
-                
-        elif 'docx' in filename or file_mime == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-            # DOCX extraction using mammoth correctly
-            try:
-                # The correct way to use mammoth is with convert_to_html or convert_to_markdown
-                result = mammoth.convert_to_text(file)
-                return result.value
+                raw = mammoth.convert_to_text(file).value
             except AttributeError:
-                # Fallback if convert_to_text is not available
-                result = mammoth.extract_raw_text(file)
-                return result.value
-            except Exception as e:
-                raise ValueError(f"Error processing DOCX: {str(e)}")
-                
+                raw = mammoth.extract_raw_text(file).value
         else:
-            # Unsupported file type
-            raise ValueError("Unsupported file type. Please upload PDF or DOCX.")
-            
-    except Exception as e:
-        # Fallback to extension-based detection if MIME detection fails
+            raise ValueError("Unsupported file type.")
+    except Exception:
+        # fallback on extension
+        file.seek(0)
         if filename.endswith('.pdf'):
-            try:
-                pdf_reader = PyPDF2.PdfReader(file)
-                text = ""
-                for page in pdf_reader.pages:
-                    text += page.extract_text() or ""
-                return text
-            except Exception as pdf_err:
-                raise ValueError(f"Error processing PDF: {str(pdf_err)}")
-                
+            reader = PyPDF2.PdfReader(file)
+            for p in reader.pages:
+                raw += p.extract_text() or ""
         elif filename.endswith('.docx'):
             try:
-                # Try different mammoth methods
-                try:
-                    result = mammoth.convert_to_text(file)
-                    return result.value
-                except AttributeError:
-                    # If convert_to_text fails, try convert_to_html and strip tags
-                    result = mammoth.convert_to_html(file)
-                    # Basic HTML tag removal (you might want to use a proper HTML parser)
-                    text = re.sub(r'<[^>]+>', ' ', result.value)
-                    return re.sub(r'\s+', ' ', text).strip()
-            except Exception as docx_err:
-                raise ValueError(f"Error processing DOCX: {str(docx_err)}")
-                
+                raw = mammoth.convert_to_text(file).value
+            except AttributeError:
+                html = mammoth.convert_to_html(file).value
+                text = re.sub(r'<[^>]+>', ' ', html)
+                raw = re.sub(r'\s+', ' ', text).strip()
         else:
-            raise ValueError("Unsupported file type. Please upload PDF or DOCX.")
+            raise ValueError("Unsupported file type.")
+
+    # now normalize everything once
+    return normalize_extracted_text(raw)     
 
 def convert_to_pdf(text):
     """
