@@ -274,8 +274,66 @@
         </div>
     </nav>
 
+    <!-- How to Use SURAT -->
+    <section id="how-to-use"
+        class="relative bg-white py-20 mb-12 px-6 md:px-20 rounded-3xl shadow-2xl border-l-[6px] border-yellow-500 overflow-hidden">
+
+        <!-- Heading -->
+        <h2 class="text-4xl font-semibold text-center mb-16 text-yellow-600 tracking-wide"
+            style="font-family: 'Playfair Display', serif;">
+            <i class="fas fa-play-circle mr-2 text-yellow-500 text-3xl align-middle"></i> How to Use SURAT
+            <div class="w-20 h-1 bg-yellow-400 mx-auto mt-3 rounded"></div>
+        </h2>
+
+        <!-- Stepper Timeline -->
+        <div class="relative max-w-4xl mx-auto space-y-20 font-[Lora]">
+
+            <!-- Step 1 -->
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-8">
+                <div class="flex-shrink-0 text-yellow-500 text-5xl font-bold">1</div>
+                <div class="text-gray-700 text-lg leading-relaxed max-w-xl">
+                    <strong class="text-yellow-700 font-semibold">Paste</strong> the complete job description into the
+                    JD box.
+                    <div class="text-sm mt-1 text-gray-500">The resume section will unlock automatically once parsed.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-8">
+                <div class="flex-shrink-0 text-yellow-500 text-5xl font-bold">2</div>
+                <div class="text-gray-700 text-lg leading-relaxed max-w-xl">
+                    <strong class="text-yellow-700 font-semibold">Choose</strong> your preferred method: Upload a resume
+                    file or paste the resume text.
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-8">
+                <div class="flex-shrink-0 text-yellow-500 text-5xl font-bold">3</div>
+                <div class="text-gray-700 text-lg leading-relaxed max-w-xl">
+                    <strong class="text-yellow-700 font-semibold">Scroll down</strong> to see your full analysis with
+                    visual insights, skill matching, and personalized recommendations.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Decorative Luxury Glow -->
+        <div
+            class="absolute top-0 right-0 w-40 h-40 bg-yellow-100 rounded-full blur-3xl opacity-30 pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 w-40 h-40 bg-yellow-200 rounded-full blur-2xl opacity-20 pointer-events-none">
+        </div>
+
+    </section>
+
+
+
 
     <div class="container mx-auto px-4 py-8 main-container" id="allstartshere">
+
 
         <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
             <div
@@ -316,7 +374,7 @@
             <div id="resumeSection"
                 class="disabled bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
                 <div id="lockedmessagependingjd" class="my-4 p-4 text-red-600 text-center text-2xl ">
-                        Please paste Job Description first to unlock this section.
+                    Please paste Job Description first to unlock this section.
                 </div>
 
                 <div id="lockedmessagependingjdinlocker" class="hidden">
@@ -336,7 +394,7 @@
                             Text</button>
                     </div>
 
-                    
+
 
                     <!-- Upload Box -->
                     <div id="uploadBox" class="hidden mb-4">
@@ -380,7 +438,8 @@
 
 
         <!-- Analysis Section - Middle Row -->
-        <div class="mx-auto sm:px-4 lg:px-6 xl:px-8 bg-white rounded-xl card mb-8 p-6 hidden" id="mainanalysiscommoncontainer">
+        <div class="mx-auto sm:px-4 lg:px-6 xl:px-8 bg-white rounded-xl card mb-8 p-6 hidden"
+            id="mainanalysiscommoncontainer">
             <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800 hidden">
                 <i class="fas fa-chart-bar mr-2 text-green-600"></i>Resume Analysis
             </h2>
@@ -534,7 +593,7 @@
                     <!-- Header -->
                     <h2 class="text-2xl font-semibold flex items-center text-gray-800"
                         style="font-family: 'Playfair Display', serif;">
-                        <i class="fas fa-user-tie mr-3 text-yellow-500"></i> Human Analysis                        
+                        <i class="fas fa-user-tie mr-3 text-yellow-500"></i> Human Analysis
                     </h2>
 
                     <!-- Info Message -->
@@ -612,7 +671,7 @@
                 <div id="detailedAnalysisContainer" class="w-full hidden mx-auto font-[Lora]">
                     <h3 class="text-2xl font-semibold mb-6 text-gray-800"
                         style="font-family: 'Playfair Display', serif;">
-                       <i class="fas fa-chart-line mr-3 text-yellow-500"></i> Detailed Resume Analysis
+                        <i class="fas fa-chart-line mr-3 text-yellow-500"></i> Detailed Resume Analysis
                     </h3>
 
                     <div class="overflow-hidden rounded-xl border-l-4 border-yellow-500 shadow-xl bg-white">
@@ -687,8 +746,7 @@
 
             <!-- Category Analysis Section -->
             <div id="categoryAnalysisContainer" class="mt-12 hidden font-[Lora]">
-                <h3 class="text-2xl font-semibold mb-6 text-gray-800"
-                    style="font-family: 'Playfair Display', serif;">
+                <h3 class="text-2xl font-semibold mb-6 text-gray-800" style="font-family: 'Playfair Display', serif;">
                     <i class="fas fa-layer-group mr-3 text-yellow-500"></i> Skills by Category
                 </h3>
 
