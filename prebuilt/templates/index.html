@@ -390,10 +390,10 @@
             <div class="flex flex-col items-center">
                 <!-- Hero Feedback -->
                 <div id="feedbackHero" class="mb-12 text-center font-[Lora] hidden">
-                    <h2 id="heroEmotion" class="text-5xl md:text-6xl font-bold text-yellow-600 mb-4"
+                    <h2 id="heroEmotion" class="text-5xl md:text-6xl font-bold text-yellow-600 my-10"
                         style="font-family:'Playfair Display', serif;"></h2>
-                    <p id="heroHeadline" class="text-2xl md:text-3xl text-gray-800 mb-6"></p>
-                    <div
+                    <p id="heroHeadline" class="text-2xl md:text-3xl text-gray-800 my-10"></p>
+                    <!-- <div
                         class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-xl mx-auto text-sm font-medium text-gray-700">
                         <div>
                             <div id="heroSkillPct" class="text-3xl font-semibold text-yellow-600"></div>
@@ -411,7 +411,7 @@
                             <div id="heroQuantPct" class="text-3xl font-semibold text-yellow-600"></div>
                             <div>Quantification</div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
 
@@ -1004,7 +1004,7 @@
 
             // Show loading
             document.getElementById('loadingAnalysis').classList.remove('hidden');
-            document.getElementById('feedbackHero').classList.add('hidden');            
+            document.getElementById('feedbackHero').classList.add('hidden');
             document.getElementById('bothchartsinside').classList.add('hidden');
             // document.getElementById('chartContainer').classList.add('hidden');
             document.getElementById('matchedSkillsContainer').classList.add('hidden');
@@ -1036,7 +1036,7 @@
 
                     // Hide loading, show results
                     document.getElementById('loadingAnalysis').classList.add('hidden');
-                    document.getElementById('feedbackHero').classList.remove('hidden');                    
+                    document.getElementById('feedbackHero').classList.remove('hidden');
                     document.getElementById('bothchartsinside').classList.remove('hidden');
                     // document.getElementById('chartContainer').classList.remove('hidden');
                     document.getElementById('matchedSkillsContainer').classList.remove('hidden');
@@ -1203,18 +1203,20 @@
         }
 
         // map percentage → emotion text + corresponding tailwind classes
+
         function getEmotionMeta(match) {
-            if (match < 10) return { text: "Critical gaps—urgent revision", textClass: "text-red-600", barClass: "bg-red-600" };
-            if (match < 20) return { text: "Major gaps—significant revisions", textClass: "text-orange-600", barClass: "bg-orange-600" };
-            if (match < 30) return { text: "Substantial gaps—considerable improvement needed", textClass: "text-amber-600", barClass: "bg-amber-600" };
-            if (match < 40) return { text: "Moderate gaps—targeted enhancements advised", textClass: "text-yellow-600", barClass: "bg-yellow-600" };
-            if (match < 50) return { text: "Minor gaps—additional details recommended", textClass: "text-lime-600", barClass: "bg-lime-600" };
-            if (match < 60) return { text: "Fair match—strengthen content", textClass: "text-green-600", barClass: "bg-green-600" };
-            if (match < 70) return { text: "Good match—minor refinements suggested", textClass: "text-emerald-600", barClass: "bg-emerald-600" };
-            if (match < 80) return { text: "Strong match—well-aligned", textClass: "text-teal-600", barClass: "bg-teal-600" };
-            if (match < 90) return { text: "Excellent match—very well-suited", textClass: "text-sky-600", barClass: "bg-sky-600" };
-            return { text: "Outstanding fit—exceptional alignment", textClass: "text-blue-600", barClass: "bg-blue-600" };
+            if (match < 10) return { text: "Critical Gaps", textClass: "text-red-600", barClass: "bg-red-600" };
+            if (match < 20) return { text: "Major Gaps", textClass: "text-orange-600", barClass: "bg-orange-600" };
+            if (match < 30) return { text: "Substantial Gaps", textClass: "text-amber-600", barClass: "bg-amber-600" };
+            if (match < 40) return { text: "Moderate Gaps", textClass: "text-yellow-600", barClass: "bg-yellow-600" };
+            if (match < 50) return { text: "Minor Gaps", textClass: "text-lime-600", barClass: "bg-lime-600" };
+            if (match < 60) return { text: "Fair Match", textClass: "text-green-600", barClass: "bg-green-600" };
+            if (match < 70) return { text: "Good Match", textClass: "text-emerald-600", barClass: "bg-emerald-600" };
+            if (match < 80) return { text: "Strong Match", textClass: "text-teal-600", barClass: "bg-teal-600" };
+            if (match < 90) return { text: "Excellent Match", textClass: "text-sky-600", barClass: "bg-sky-600" };
+            return { text: "Outstanding Fit", textClass: "text-blue-600", barClass: "bg-blue-600" };
         }
+
         function displayAnalysis(data) {
 
             const mp = Math.round(data.match_percentage);

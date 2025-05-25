@@ -903,26 +903,28 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
 
     # Emotion-based response (for backward compatibility)
     # Emotion-based response (for backward compatibility)
+    # in your Python emotion logic
     if match_percentage < 10:
-        emotion = "Critical gaps—urgent revision"
+        emotion = "Critical Gaps"
     elif match_percentage < 20:
-        emotion = "Major gaps—significant revisions"
+        emotion = "Major Gaps"
     elif match_percentage < 30:
-        emotion = "Substantial gaps—considerable improvement needed"
+        emotion = "Substantial Gaps"
     elif match_percentage < 40:
-        emotion = "Moderate gaps—targeted enhancements advised"
+        emotion = "Moderate Gaps"
     elif match_percentage < 50:
-        emotion = "Minor gaps—additional details recommended"
+        emotion = "Minor Gaps"
     elif match_percentage < 60:
-        emotion = "Fair match—strengthen content"
+        emotion = "Fair Match"
     elif match_percentage < 70:
-        emotion = "Good match—minor refinements suggested"
+        emotion = "Good Match"
     elif match_percentage < 80:
-        emotion = "Strong match—well-aligned"
+        emotion = "Strong Match"
     elif match_percentage < 90:
-        emotion = "Excellent match—very well-suited"
+        emotion = "Excellent Match"
     else:
-        emotion = "Outstanding fit—exceptional alignment"
+        emotion = "Outstanding Fit"
+
      
     return {
         "matched_skills": matched_skills,
