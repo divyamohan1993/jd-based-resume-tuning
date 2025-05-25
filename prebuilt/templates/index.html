@@ -131,6 +131,39 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             transition: box-shadow 0.3s ease-in-out;
         }
+
+        .toast-success {
+            position: fixed;
+            top: 80px;
+            right: 30px;
+            background-color: #10b981;
+            /* emerald-500 */
+            color: white;
+            padding: 12px 24px;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+            z-index: 1000;
+            animation: fadeInOut 4s ease-in-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            10%,
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
     </style>
 </head>
 
@@ -195,7 +228,7 @@
 
     <div class="container mx-auto px-4 py-8 main-container" id="allstartshere">
 
-        <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">            
+        <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
             <div
                 class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
                 <div>
@@ -289,272 +322,274 @@
             </div>
 
         </div>
-    
 
-    <!-- Analysis Section - Middle Row -->
-    <div class="bg-white rounded-xl p-6 card mb-8">
-        <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-            <i class="fas fa-chart-bar mr-2 text-green-600"></i>Resume Analysis
-        </h2>
-        <p class="text-gray-600 mb-4 text-sm">
-            Analyze how well your resume matches the job requirements and get insights.
-        </p>
-        <button id="analyzeResumeBtn"
-            class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center font-medium mb-6">
-            <i class="fas fa-chart-bar mr-2"></i>Analyze Matching
-        </button>
 
-        <!-- MODIFIED ANALYSIS LAYOUT - Center-aligned pyramid structure -->
-        <div class="flex flex-col items-center">
-            <!-- Emotion and Overall Match at the top -->
-            <div class="mb-4 text-center">
-                <div id="emotion" class="text-center text-2xl font-bold mb-4 hidden"></div>
+        <!-- Analysis Section - Middle Row -->
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- <div class="bg-white rounded-xl p-6 card mb-8"> -->
+            <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                <i class="fas fa-chart-bar mr-2 text-green-600"></i>Resume Analysis
+            </h2>
+            <p class="text-gray-600 mb-4 text-sm">
+                Analyze how well your resume matches the job requirements and get insights.
+            </p>
+            <button id="analyzeResumeBtn"
+                class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center font-medium mb-6">
+                <i class="fas fa-chart-bar mr-2"></i>Analyze Matching
+            </button>
 
-                <div id="matchPercentageContainer" class="mb-6 hidden w-full max-w-md">
-                    <div class="flex justify-between text-sm font-medium">
-                        <span class="text-gray-700">Overall Match</span>
-                        <span id="matchPercentageText" class="text-blue-600">0%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-5 mt-1">
-                        <div id="matchPercentageBar" class="bg-green-500 h-5 rounded-full progress-bar"
-                            style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
+            <!-- MODIFIED ANALYSIS LAYOUT - Center-aligned pyramid structure -->
+            <div class="flex flex-col items-center">
+                <!-- Emotion and Overall Match at the top -->
+                <div class="mb-4 text-center">
+                    <div id="emotion" class="text-center text-2xl font-bold mb-4 hidden"></div>
 
-            <!-- Chart in the center -->
-            <div class="canvas-container hidden w-full max-w-md mb-6" id="chartContainer">
-                <canvas id="skillChart"></canvas>
-            </div>
-
-            <!-- Matched and Unmatched Skills side by side -->
-            <div id="matchedSkillsContainer" class="hidden w-full max-w-3xl mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gray-50 p-4 rounded-lg border border-green-200">
-                        <h3 class="text-lg font-medium text-green-700 mb-2">Matched Skills</h3>
-                        <ul id="matchedSkillsList" class="list-disc pl-5 space-y-1 text-green-600"></ul>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded-lg border border-red-200">
-                        <h3 class="text-lg font-medium text-red-700 mb-2">Missing Skills</h3>
-                        <ul id="unmatchedSkillsList" class="list-disc pl-5 space-y-1 text-red-600"></ul>
+                    <div id="matchPercentageContainer" class="mb-6 hidden w-full max-w-md">
+                        <div class="flex justify-between text-sm font-medium">
+                            <span class="text-gray-700">Overall Match</span>
+                            <span id="matchPercentageText" class="text-blue-600">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-5 mt-1">
+                            <div id="matchPercentageBar" class="bg-green-500 h-5 rounded-full progress-bar"
+                                style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Detailed Analysis in tabular format -->
-            <div id="detailedAnalysisContainer" class="w-full max-w-3xl hidden">
-                <h3 class="text-lg font-medium mb-3 text-gray-800 text-center">Detailed Analysis</h3>
-                <div class="overflow-hidden border border-gray-200 rounded-lg shadow">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Category</th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Details</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Overall
-                                    Assessment</td>
-                                <td class="px-6 py-4 text-sm text-gray-700" id="overallAssessment"></td>
-                            </tr>
-                            <tr class="bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Priority
-                                    Skills to Add</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    <ul id="prioritySkillsList" class="list-disc pl-5 space-y-1"></ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Quick
-                                    Fixes</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    <ul id="quickFixes" class="list-disc pl-5 space-y-1"></ul>
-                                </td>
-                            </tr>
-                            <tr class="bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">
-                                    Recommendations</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    <ul id="recommendationsList" class="list-disc pl-5 space-y-1"></ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Sections
-                                    to Improve</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    <ul id="sectionsToImproveList" class="list-disc pl-5 space-y-1"></ul>
-                                </td>
-                            </tr>
-                            <!-- <tr class="bg-gray-50">
+                <!-- Chart in the center -->
+                <div class="canvas-container hidden w-full max-w-md mb-6" id="chartContainer">
+                    <canvas id="skillChart"></canvas>
+                </div>
+
+                <!-- Matched and Unmatched Skills side by side -->
+                <div id="matchedSkillsContainer" class="hidden w-full max-w-3xl mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg border border-green-200">
+                            <h3 class="text-lg font-medium text-green-700 mb-2">Matched Skills</h3>
+                            <ul id="matchedSkillsList" class="list-disc pl-5 space-y-1 text-green-600"></ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-red-200">
+                            <h3 class="text-lg font-medium text-red-700 mb-2">Missing Skills</h3>
+                            <ul id="unmatchedSkillsList" class="list-disc pl-5 space-y-1 text-red-600"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis in tabular format -->
+                <div id="detailedAnalysisContainer" class="w-full max-w-3xl hidden">
+                    <h3 class="text-lg font-medium mb-3 text-gray-800 text-center">Detailed Analysis</h3>
+                    <div class="overflow-hidden border border-gray-200 rounded-lg shadow">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Category</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Details</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Overall
+                                        Assessment</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700" id="overallAssessment"></td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Priority
+                                        Skills to Add</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700">
+                                        <ul id="prioritySkillsList" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Quick
+                                        Fixes</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700">
+                                        <ul id="quickFixes" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">
+                                        Recommendations</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700">
+                                        <ul id="recommendationsList" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Sections
+                                        to Improve</td>
+                                    <td class="px-6 py-4 text-sm text-gray-700">
+                                        <ul id="sectionsToImproveList" class="list-disc pl-5 space-y-1"></ul>
+                                    </td>
+                                </tr>
+                                <!-- <tr class="bg-gray-50">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">ATS Score
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-700" id="atsFeedback"></td>
                                 </tr> -->
 
-                            <tr class="bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">ATS Score
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-700">
-                                    <div class="relative w-24 h-24 mx-auto">
-                                        <canvas id="atsScoreChart"></canvas>
-                                        <!-- overlay the percentage text -->
-                                        <div id="atsScoreText"
-                                            class="absolute inset-0 flex items-center justify-center text-lg font-semibold">
+                                <tr class="bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">ATS Score
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-700">
+                                        <div class="relative w-24 h-24 mx-auto">
+                                            <canvas id="atsScoreChart"></canvas>
+                                            <!-- overlay the percentage text -->
+                                            <div id="atsScoreText"
+                                                class="absolute inset-0 flex items-center justify-center text-lg font-semibold">
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Requirement Gap Analysis -->
-            <div id="requirementAnalysisContainer" class="hidden mt-6">
-                <h3 class="text-lg font-medium mb-3 text-gray-800 text-center">
-                    Requirement Gap Analysis
-                </h3>
-                <div id="requirementList" class="space-y-4"></div>
-            </div>
-
-            <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 m-6 card mb-8 hidden space-y-6">
-                <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-                    <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Metrics Dashboard
-                </h2>
-                <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                </div>
-            </div>
-
-
-        </div>
-
-        <!-- Category Analysis Section -->
-        <div id="categoryAnalysisContainer" class="mt-6 hidden">
-            <h3 class="text-lg font-medium mb-3 text-gray-800 text-center">Skills by Category</h3>
-            <div id="categoryCharts" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-        </div>
-
-        <div id="loadingAnalysis" class="mt-4 text-center hidden">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-600">
-            </div>
-            <p class="mt-2 text-green-600">Analyzing resume...</p>
-        </div>
-    </div>
-
-    <!-- Generate Section - Bottom Row -->
-    <div class="bg-white rounded-xl p-6 card">
-        <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-            <i class="fas fa-file-alt mr-2 text-purple-600"></i>Tailored Resume
-        </h2>
-        <p class="text-gray-600 mb-4 text-sm">
-            Generate a professionally tailored resume optimized for this specific job.
-        </p>
-
-        <!-- Template Selector -->
-        <div class="mb-5">
-            <h3 class="text-md font-medium mb-3 text-gray-700">Choose a Template</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="template-option cursor-pointer active" data-template="professional">
-                    <div
-                        class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-blue-500 transition duration-300 h-24 flex flex-col">
-                        <div class="w-full h-4 bg-blue-500 mb-2"></div>
-                        <div class="w-3/4 h-2 bg-gray-300 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="mt-auto text-xs text-center">Professional</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="template-option cursor-pointer" data-template="modern">
-                    <div
-                        class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-gray-300 hover:border-blue-500 transition duration-300 h-24 flex flex-col">
-                        <div class="w-1/2 mx-auto h-3 bg-teal-500 mb-2 rounded-full"></div>
-                        <div class="w-3/4 mx-auto h-2 bg-gray-300 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="mt-auto text-xs text-center">Modern</div>
+
+                <!-- Requirement Gap Analysis -->
+                <div id="requirementAnalysisContainer" class="hidden mt-6">
+                    <h3 class="text-lg font-medium mb-3 text-gray-800 text-center">
+                        Requirement Gap Analysis
+                    </h3>
+                    <div id="requirementList" class="space-y-4"></div>
+                </div>
+
+                <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 m-6 card mb-8 hidden space-y-6">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                        <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Metrics Dashboard
+                    </h2>
+                    <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     </div>
                 </div>
-                <div class="template-option cursor-pointer" data-template="classic">
-                    <div
-                        class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-gray-300 hover:border-blue-500 transition duration-300 h-24 flex flex-col">
-                        <div class="w-full text-center h-4 bg-indigo-500 mb-2"></div>
-                        <div class="w-3/4 h-2 bg-gray-300 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="mt-auto text-xs text-center">Classic</div>
+
+
+            </div>
+
+            <!-- Category Analysis Section -->
+            <div id="categoryAnalysisContainer" class="mt-6 hidden">
+                <h3 class="text-lg font-medium mb-3 text-gray-800 text-center">Skills by Category</h3>
+                <div id="categoryCharts" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+
+            <div id="loadingAnalysis" class="mt-4 text-center hidden">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-600">
+                </div>
+                <p class="mt-2 text-green-600">Analyzing resume...</p>
+            </div>
+        </div>
+
+        <!-- Generate Section - Bottom Row -->
+        <div class="bg-white rounded-xl p-6 card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                <i class="fas fa-file-alt mr-2 text-purple-600"></i>Tailored Resume
+            </h2>
+            <p class="text-gray-600 mb-4 text-sm">
+                Generate a professionally tailored resume optimized for this specific job.
+            </p>
+
+            <!-- Template Selector -->
+            <div class="mb-5">
+                <h3 class="text-md font-medium mb-3 text-gray-700">Choose a Template</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="template-option cursor-pointer active" data-template="professional">
+                        <div
+                            class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-blue-500 transition duration-300 h-24 flex flex-col">
+                            <div class="w-full h-4 bg-blue-500 mb-2"></div>
+                            <div class="w-3/4 h-2 bg-gray-300 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="mt-auto text-xs text-center">Professional</div>
+                        </div>
+                    </div>
+                    <div class="template-option cursor-pointer" data-template="modern">
+                        <div
+                            class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-gray-300 hover:border-blue-500 transition duration-300 h-24 flex flex-col">
+                            <div class="w-1/2 mx-auto h-3 bg-teal-500 mb-2 rounded-full"></div>
+                            <div class="w-3/4 mx-auto h-2 bg-gray-300 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="mt-auto text-xs text-center">Modern</div>
+                        </div>
+                    </div>
+                    <div class="template-option cursor-pointer" data-template="classic">
+                        <div
+                            class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-gray-300 hover:border-blue-500 transition duration-300 h-24 flex flex-col">
+                            <div class="w-full text-center h-4 bg-indigo-500 mb-2"></div>
+                            <div class="w-3/4 h-2 bg-gray-300 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="mt-auto text-xs text-center">Classic</div>
+                        </div>
+                    </div>
+                    <div class="template-option cursor-pointer" data-template="minimal">
+                        <div
+                            class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-gray-300 hover:border-blue-500 transition duration-300 h-24 flex flex-col">
+                            <div class="w-1/4 h-3 bg-gray-800 mb-2"></div>
+                            <div class="w-3/4 h-2 bg-gray-300 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="w-full h-1 bg-gray-200 mb-1"></div>
+                            <div class="mt-auto text-xs text-center">Minimal</div>
+                        </div>
                     </div>
                 </div>
-                <div class="template-option cursor-pointer" data-template="minimal">
-                    <div
-                        class="template-preview bg-gray-50 p-3 rounded-lg border-2 border-gray-300 hover:border-blue-500 transition duration-300 h-24 flex flex-col">
-                        <div class="w-1/4 h-3 bg-gray-800 mb-2"></div>
-                        <div class="w-3/4 h-2 bg-gray-300 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="w-full h-1 bg-gray-200 mb-1"></div>
-                        <div class="mt-auto text-xs text-center">Minimal</div>
-                    </div>
+                <input type="hidden" id="templateStyle" value="professional">
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <select id="outputFormat"
+                    class="col-span-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 text-gray-700">
+                    <option value="pdf">PDF</option>
+                    <option value="docx">DOCX</option>
+                </select>
+                <button id="previewResumeBtn"
+                    class="col-span-1 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center font-medium">
+                    <i class="fas fa-eye mr-2"></i>Preview
+                </button>
+                <button id="generateResumeBtn"
+                    class="col-span-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition duration-300 flex items-center justify-center font-medium">
+                    <i class="fas fa-file-alt mr-2"></i>Download
+                </button>
+            </div>
+
+            <div id="resumePreview" class="hidden">
+                <h3 class="text-lg font-medium mb-3 text-gray-800">Content Preview</h3>
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 max-height-box">
+                    <div id="previewContent" class="text-sm whitespace-pre-line text-gray-700"></div>
                 </div>
             </div>
-            <input type="hidden" id="templateStyle" value="professional">
+            <div id="loadingTailoring" class="mt-4 text-center hidden">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-600">
+                </div>
+                <p class="mt-2 text-purple-600">Generating tailored resume...</p>
+            </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4 mb-4">
-            <select id="outputFormat"
-                class="col-span-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 text-gray-700">
-                <option value="pdf">PDF</option>
-                <option value="docx">DOCX</option>
-            </select>
-            <button id="previewResumeBtn"
-                class="col-span-1 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-300 flex items-center justify-center font-medium">
-                <i class="fas fa-eye mr-2"></i>Preview
-            </button>
-            <button id="generateResumeBtn"
-                class="col-span-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition duration-300 flex items-center justify-center font-medium">
-                <i class="fas fa-file-alt mr-2"></i>Download
-            </button>
-        </div>
-
-        <div id="resumePreview" class="hidden">
-            <h3 class="text-lg font-medium mb-3 text-gray-800">Content Preview</h3>
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 max-height-box">
-                <div id="previewContent" class="text-sm whitespace-pre-line text-gray-700"></div>
+        <!-- Tips Section -->
+        <div class="mt-8 bg-white p-6 rounded-xl shadow-lg card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>Resume Best Practices
+            </h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 p-5 rounded-lg shadow-sm border-l-4 border-blue-500 hover:shadow-md transition">
+                    <h3 class="font-bold text-lg mb-2 text-blue-700">Tailor to the Job</h3>
+                    <p class="text-gray-700">Customize your resume for each position by highlighting relevant skills and
+                        experience that match the job requirements.</p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-lg shadow-sm border-l-4 border-green-500 hover:shadow-md transition">
+                    <h3 class="font-bold text-lg mb-2 text-green-700">Use Action Verbs</h3>
+                    <p class="text-gray-700">Start achievement bullets with strong action verbs like "achieved,"
+                        "implemented," or "created" to showcase your contributions.</p>
+                </div>
+                <div
+                    class="bg-gray-50 p-5 rounded-lg shadow-sm border-l-4 border-purple-500 hover:shadow-md transition">
+                    <h3 class="font-bold text-lg mb-2 text-purple-700">Quantify Results</h3>
+                    <p class="text-gray-700">Include numbers and percentages to quantify your achievements and
+                        demonstrate your impact with concrete evidence.</p>
+                </div>
             </div>
         </div>
-        <div id="loadingTailoring" class="mt-4 text-center hidden">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-600">
-            </div>
-            <p class="mt-2 text-purple-600">Generating tailored resume...</p>
-        </div>
-    </div>
-
-    <!-- Tips Section -->
-    <div class="mt-8 bg-white p-6 rounded-xl shadow-lg card">
-        <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-            <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>Resume Best Practices
-        </h2>
-        <div class="grid md:grid-cols-3 gap-6">
-            <div class="bg-gray-50 p-5 rounded-lg shadow-sm border-l-4 border-blue-500 hover:shadow-md transition">
-                <h3 class="font-bold text-lg mb-2 text-blue-700">Tailor to the Job</h3>
-                <p class="text-gray-700">Customize your resume for each position by highlighting relevant skills and
-                    experience that match the job requirements.</p>
-            </div>
-            <div class="bg-gray-50 p-5 rounded-lg shadow-sm border-l-4 border-green-500 hover:shadow-md transition">
-                <h3 class="font-bold text-lg mb-2 text-green-700">Use Action Verbs</h3>
-                <p class="text-gray-700">Start achievement bullets with strong action verbs like "achieved,"
-                    "implemented," or "created" to showcase your contributions.</p>
-            </div>
-            <div class="bg-gray-50 p-5 rounded-lg shadow-sm border-l-4 border-purple-500 hover:shadow-md transition">
-                <h3 class="font-bold text-lg mb-2 text-purple-700">Quantify Results</h3>
-                <p class="text-gray-700">Include numbers and percentages to quantify your achievements and
-                    demonstrate your impact with concrete evidence.</p>
-            </div>
-        </div>
-    </div>
     </div>
 
     <footer class="bg-black-900 text-white mt-12 py-8">
@@ -565,6 +600,8 @@
             </div>
         </div>
     </footer>
+
+    <div id="toastContainer"></div>
 
     <script>
         // Global variables to store data
@@ -674,6 +711,7 @@
                     .finally(() => {
                         // store them in your hidden textarea, show + auto-hide banner
                         showJdSuccess();
+                        showSuccessToast('Key skills extracted!');
                         document.getElementById('loadingSkills').classList.add('hidden');
 
                         document.getElementById('skillsTable').classList.add('hidden');
@@ -1494,6 +1532,19 @@
             // chooseUpload.classList.add('bg-yellow-600','text-white');
         });
 
+        function showSuccessToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-success';
+            toast.innerText = message;
+
+            const container = document.getElementById('toastContainer');
+            container.innerHTML = ''; // clear any previous
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
 
     </script>
 
