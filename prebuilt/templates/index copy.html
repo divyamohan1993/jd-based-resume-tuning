@@ -118,7 +118,7 @@
         body {
             padding-top: 70px;
             /* push content below fixed navbar */
-
+            
         }
 
         /* tailwind-playable utility classes */
@@ -137,53 +137,62 @@
 <body class="pt-16 bg-gradient-to-br from-red-50 to-gray-200 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="fas fa-file-alt me-2"></i>
-                <span>
-                    <div>SURAT</div>
-                    <small class="text-muted">SU Resume Analyzer & Tuner</small>
-                </span>
-            </a>
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <i class="fas fa-file-alt me-2"></i>
+        <span>
+          <div>SURAT</div>
+          <small class="text-muted">Resume Analyzer & Tuner</small>
+        </span>
+      </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav"
-                aria-controls="offcanvasNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasNav"
+        aria-controls="offcanvasNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>                    
-                    <li class="nav-item">
-                        <a class="btn btn-analyze ms-lg-3" href="#">Analyze Now</a>
-                    </li>
-                </ul>
-            </div>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Docs</a></li>
+          <li class="nav-item">
+            <a class="btn btn-analyze ms-lg-3" href="#">Analyze Now</a>
+          </li>
+        </ul>
+      </div>
 
-            <!-- Offcanvas for mobile -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
-                <div class="offcanvas-header">
-                    <h5 id="offcanvasNavLabel" class="offcanvas-title">Menu</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav">                        
-                        <li class="nav-item mt-3">
-                            <a class="btn btn-analyze w-100" href="#">Analyze Now</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+      <!-- Offcanvas for mobile -->
+      <div
+        class="offcanvas offcanvas-end"
+        tabindex="-1"
+        id="offcanvasNav"
+        aria-labelledby="offcanvasNavLabel"
+      >
+        <div class="offcanvas-header">
+          <h5 id="offcanvasNavLabel" class="offcanvas-title">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
-    </nav>
-
-    <!-- Bootstrap 5 JS Bundle (includes Popper) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <!-- Font Awesome (for icons) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-
-
+        <div class="offcanvas-body">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Docs</a></li>
+            <li class="nav-item mt-3">
+              <a class="btn btn-analyze w-100" href="#">Analyze Now</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+  
     <!-- <nav class="top-0 left-0 w-full bg-white backdrop-blur-md shadow-md z-50">
         <div class="container mx-auto flex items-center justify-between py-4 px-6">
             <div class="flex items-center space-x-3">
