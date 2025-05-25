@@ -99,7 +99,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication
+CORS(app, origins=["https://jdtuning.dmj.one"])  # Enable CORS for frontend communication
 
 # Now read your key
 GEMINI_KEY = os.getenv("GEMINI_KEY")
