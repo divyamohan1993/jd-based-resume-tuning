@@ -1,3 +1,76 @@
+# ==============================================================================  
+#                                CONFIDENTIAL  
+# ==============================================================================  
+#  
+#  Title       : SURAT - Shoolini University Resume Analysis & Tuning System
+#  Description : A Shoolini University Resume Analysis & Tuning System  
+#  Author      : Divya Mohan  
+#  Created     : May 26, 2025  
+#  Version     : 1.0.0  
+#  
+#  © 2025 Divya Mohan. ALL RIGHTS RESERVED.  
+#  
+#  NOTICE TO RECIPIENT:  
+#  --------------------  
+#  This software and its accompanying documentation (the “Software”) are the  
+#  proprietary and confidential property of Divya Mohan. Unauthorized copying,  
+#  adaptation, distribution, use, or disclosure of this Software, in whole or in  
+#  part, is strictly prohibited. No license or right to the Software is granted  
+#  to you by implication, estoppel, or otherwise. Any permitted use must be  
+#  pursuant to a written license agreement signed by Divya Mohan.  
+#  
+#  LEGAL WARNING:  
+#  --------------  
+#  • You agree that any breach of the terms set forth herein will cause  
+#    irreparable harm to the owner, for which monetary damages may be inadequate.  
+#  • Divya Mohan reserves the right to seek injunctive relief, damages, and any  
+#    other remedies available at law or in equity against any party breaching  
+#    these terms.  
+#  • This Software is protected under the copyright laws of India,  
+#    international treaties, and other intellectual property laws.  
+#  • Civil and criminal penalties may apply for unauthorized use or distribution.  
+#  
+#  DISCLAIMER OF WARRANTY & LIMITATION OF LIABILITY:  
+#  ------------------------------------------------  
+#  THIS SOFTWARE IS PROVIDED “AS IS,” WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
+#  FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. IN NO EVENT SHALL  
+#  DIVYA MOHAN BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN  
+#  AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN  
+#  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  
+#  
+#  OVERVIEW:  
+#  ---------  
+#  This Flask-based system provides:  
+#    1. Input Sanitization:  
+#       • Truncates input to safe length, removes control characters, HTML-escapes,  
+#         and neutralizes sequences that could break prompts or code fences.  
+#    2. Resume Text Extraction:  
+#       • Parses PDF and DOCX files via python-magic, PyPDF2, and Mammoth.  
+#       • Normalizes bullets, headings, and soft-wrapped lines.  
+#    3. Skill Extraction & Categorization:  
+#       • Uses Google Gemini Generative AI to extract Technical, Soft, and  
+#         Domain skills from job descriptions, formatted as JSON.  
+#    4. Resume Analysis:  
+#       • Matches candidate skills to required skills, computing match percentages,  
+#         emotion-based gap analysis, and category-wise breakdowns.  
+#       • Leverages AI for deep contextual matching beyond simple substring checks.  
+#    5. Resume Tailoring:  
+#       • AI-driven rewriting to highlight relevant skills, achievements, and  
+#         keywords in a concise, one-page format.  
+#       • Offers PDF/DOCX output in “classic,” “modern,” or “minimal” templates.  
+#    6. Export & Delivery:  
+#       • Endpoints to download tailored resumes or preview rewritten content.  
+#  
+#  END-USER NOTES:  
+#  ---------------  
+#  • Ensure your environment variable GOOGLE_API_KEY is set before running.  
+#  • Install dependencies via:  
+#       pip install flask flask-cors google-generativeai python-magic PyPDF2 mammoth python-docx reportlab  
+#  • To modify or extend functionality, obtain prior written consent from the author.  
+#  
+# ==============================================================================  
+
 from flask import Flask, request, jsonify, render_template, send_file
 import google.generativeai as genai
 from flask_cors import CORS
