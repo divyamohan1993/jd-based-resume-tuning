@@ -374,11 +374,11 @@
 
 
         <!-- Analysis Section - Middle Row -->
-        <div class="mx-auto sm:px-4 lg:px-6 xl:px-8 bg-white rounded-xl card mb-8 p-6">
-            <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+        <div class="mx-auto sm:px-4 lg:px-6 xl:px-8 bg-white rounded-xl card mb-8 p-6 hidden" id="mainanalysiscommoncontainer">
+            <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800 hidden">
                 <i class="fas fa-chart-bar mr-2 text-green-600"></i>Resume Analysis
             </h2>
-            <p class="text-gray-600 mb-4 text-sm">
+            <p class="text-gray-600 mb-4 text-sm hidden">
                 Analyze how well your resume matches the job requirements and get insights.
             </p>
             <button id="analyzeResumeBtn"
@@ -390,9 +390,9 @@
             <div class="flex flex-col items-center">
                 <!-- Hero Feedback -->
                 <div id="feedbackHero" class="mb-12 text-center font-[Lora] hidden">
-                    <h2 id="heroEmotion" class="text-5xl md:text-6xl font-bold text-yellow-600 my-10"
+                    <h2 id="heroEmotion" class="text-4xl md:text-4xl font-bold text-yellow-600 my-10"
                         style="font-family:'Playfair Display', serif;"></h2>
-                    <p id="heroHeadline" class="text-2xl md:text-3xl text-gray-800 my-10"></p>
+                    <p id="heroHeadline" class="text-2xl md:text-2xl text-gray-800 my-10"></p>
                     <!-- <div
                         class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-xl mx-auto text-sm font-medium text-gray-700">
                         <div>
@@ -970,6 +970,7 @@
 
                         // automatically analyze once both JD and Resume are loaded:
                         if (extractedSkills.length && document.getElementById('resumeText').value.trim()) {
+                            document.getElementById('mainanalysiscommoncontainer').classList.remove('hidden');
                             triggerAnalysis();
                         }
                     }
@@ -1212,7 +1213,7 @@
             if (match < 50) return { text: "Minor Gaps", textClass: "text-lime-600", barClass: "bg-lime-600" };
             if (match < 60) return { text: "Fair Match", textClass: "text-green-600", barClass: "bg-green-600" };
             if (match < 70) return { text: "Good Match", textClass: "text-emerald-600", barClass: "bg-emerald-600" };
-            if (match < 80) return { text: "Strong Match", textClass: "text-teal-600", barClass: "bg-teal-600" };
+            if (match < 80) return { text: "Strong Match", textClass: "text-success-600", barClass: "bg-teal-600" };
             if (match < 90) return { text: "Excellent Match", textClass: "text-sky-600", barClass: "bg-sky-600" };
             return { text: "Outstanding Fit", textClass: "text-blue-600", barClass: "bg-blue-600" };
         }
@@ -1226,7 +1227,7 @@
             // 1) Emotion headline
             const heroEmotion = document.getElementById('heroEmotion');
             heroEmotion.textContent = meta.text;
-            heroEmotion.className = `text-5xl md:text-6xl font-bold ${meta.textClass}`;
+            heroEmotion.className = `text-4xl md:text-4xl font-bold my-10 ${meta.textClass}`;
 
             // 2) Sub-headline: overall assessment (1–2 sentences)
             const heroHeadline = document.getElementById('heroHeadline');
