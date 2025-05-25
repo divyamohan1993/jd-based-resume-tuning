@@ -41,6 +41,10 @@
             animation: shimmer 3s ease-in-out infinite;
         }
 
+        .font-merriweather {
+            font-family: 'Merriweather', serif;
+        }
+
         @keyframes shimmer {
             0% {
                 background-position: 200% center;
@@ -133,10 +137,6 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             transition: box-shadow 0.3s ease-in-out;
         }
-
-        .taste {
-  font-family: 'Merriweather', serif;
-}
 
         .toast-success {
             position: fixed;
@@ -314,7 +314,7 @@
         <!-- Foreground Content -->
         <div class="relative z-20 px-4 text-center">
             <img class="img-fluid my-5 mx-auto max-h-20" src="https://shooliniuniversity.com/assets/images/logo.png" />
-            <h1 class="text-6xl md:text-8xl font-bold taste">SURAT</h1>
+            <h1 class="text-6xl md:text-8xl font-bold taste" style="font-family: 'Playfair Display', serif;">SURAT</h1>
             <p class="mt-4 text-xl md:text-2xl text-yellow-100" style="font-family: 'Lora', serif;">
                 Shoolini University Resume Analyzer &amp; Tuner
             </p>
@@ -329,23 +329,26 @@
 
 
     <nav class="bg-gradient-to-l from-black via-gray-900 to-yellow-900 shadow-lg w-full border-b border-yellow-600">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="container mx-auto px-6 py-4 flex justify-center md:justify-between items-center">
 
-            <!-- Left Logo + Title -->
+            <!-- Logo + Title (always visible) -->
             <div class="flex items-center space-x-3">
                 <i class="fas fa-file-alt text-yellow-400 text-2xl"></i>
-                <h1 class="text-2xl font-bold text-yellow-300" style="font-family: 'Playfair Display', serif;">SURAT
+                <h1 class="text-2xl font-bold text-yellow-300" style="font-family: 'Playfair Display', serif;">
+                    SURAT
                 </h1>
             </div>
 
-            <!-- Right Tagline -->
+            <!-- Tagline (hidden on small, shown on md+) -->
             <div class="hidden md:flex space-x-4">
                 <p class="text-yellow-100 italic tracking-wide" style="font-family: 'Lora', serif;">
-                    A Shoolini University Resume Analysis & Tuning Service
+                    A Shoolini University Resume Analysis &amp; Tuning Service
                 </p>
             </div>
+
         </div>
     </nav>
+
 
     <!-- How to Use SURAT -->
     <section id="how-to-use"
@@ -850,15 +853,16 @@
     </div>
 
     <footer class="bg-black text-white mt-24 pt-10 pb-6 border-t-2 border-yellow-500 shadow-inner">
-        <div class="container mx-auto px-6 max-w-screen-xl text-center font-[Lora] space-y-4">
+        <div class="container mx-auto px-6 max-w-screen-xl text-center font-[Lora] space-y-4"
+            style="font-family: 'Verdana', serif;">
 
             <p class="text-sm text-gray-400">
-                <span class="text-yellow-500 font-medium" style="font-family: 'Verdana', serif;">
-                    © 2025 SURAT
+                <span class="text-yellow-500 font-medium">
+                    © 2025 <span style="font-family: 'Playfair Display', serif;">SURAT</span>
                 </span> · Shoolini University Resume Analyzer & Tuner
             </p>
 
-            <p class="text-sm text-gray-500" style="font-family: 'Verdana', sans-serif;">
+            <p class="text-sm text-gray-500">
                 Made with ❤️ by <span class="text-yellow-400 font-semibold">Divya Mohan</span> · Hosted on
                 <a href="https://dmj.one"
                     class="text-yellow-300 hover:text-yellow-200 transition underline underline-offset-2">dmj.one</a>
