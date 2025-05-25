@@ -239,7 +239,7 @@
             <!-- Right Tagline -->
             <div class="hidden md:flex space-x-4">
                 <p class="text-yellow-100 italic tracking-wide" style="font-family: 'Lora', serif;">
-                    A Shoolini University Resume Analysys & Tuning Service
+                    A Shoolini University Resume Analysis & Tuning Service
                 </p>
             </div>
         </div>
@@ -345,8 +345,7 @@
 
 
         <!-- Analysis Section - Middle Row -->
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- <div class="bg-white rounded-xl p-6 card mb-8"> -->
+        <div class="max-w-screen-xl mx-auto px-2 sm:px-4 lg:px-6 bg-white rounded-xl card mb-8">
             <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                 <i class="fas fa-chart-bar mr-2 text-green-600"></i>Resume Analysis
             </h2>
@@ -377,12 +376,15 @@
                 </div>
 
                 <!-- Chart in the center -->
-                <div class="canvas-container hidden w-full max-w-md mb-6" id="chartContainer">
+                <div class="canvas-container hidden w-half max-w-lg mb-6" id="chartContainer">
                     <canvas id="skillChart"></canvas>
                 </div>
 
                 <!-- Matched and Unmatched Skills side by side -->
                 <div id="matchedSkillsContainer" class="hidden w-full max-w-3xl mb-6">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                        <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Analysis Step: Skill Matching
+                    </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg border border-green-200">
                             <h3 class="text-lg font-medium text-green-700 mb-2">Matched Skills</h3>
@@ -393,6 +395,13 @@
                             <ul id="unmatchedSkillsList" class="list-disc pl-5 space-y-1 text-red-600"></ul>
                         </div>
                     </div>
+                </div>
+
+                <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 m-6 card mb-8 hidden space-y-6">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                        <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Analysis Step 2: Human Analysis
+                    </h2>
+                    <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-4"></div>
                 </div>
 
                 <!-- Detailed Analysis in tabular format -->
@@ -476,13 +485,7 @@
                     <div id="requirementList" class="space-y-4"></div>
                 </div>
 
-                <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 m-6 card mb-8 hidden space-y-6">
-                    <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-                        <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Metrics Dashboard
-                    </h2>
-                    <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    </div>
-                </div>
+
 
 
             </div>
@@ -767,7 +770,7 @@
                         msg.classList.remove("hidden");
                         showSuccessToast('Resume Uploaded Successfully!');
                         // setTimeout(() => msg.classList.add("hidden"), 3000);
-                        
+
                         // automatically analyze once both JD and Resume are loaded:
                         if (extractedSkills.length && document.getElementById('resumeText').value.trim()) {
                             triggerAnalysis();
@@ -862,7 +865,7 @@
                     alert('Error analyzing resume. Please try again.');
                     document.getElementById('loadingAnalysis').classList.add('hidden');
                 });
-            }
+        }
 
         // Preview Resume
         document.getElementById('previewResumeBtn').addEventListener('click', function () {
