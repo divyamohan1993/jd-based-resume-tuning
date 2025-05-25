@@ -206,6 +206,14 @@
         }
     </style>
 
+    <style>
+  #detailedAnalysisContainer table tr:hover {
+    background-color: #fffbe6;
+    transition: background-color 0.3s ease;
+  }
+</style>
+
+
 </head>
 
 <body class="bg-gradient-to-br from-red-200 to-gray-200 min-h-screen">
@@ -410,7 +418,7 @@
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
 
                         <!-- Skill Match Doughnut Chart -->
-                        <div id="chartContainer" class="canvas-container w-48 h-48 hidden">
+                        <div id="chartContainer" class="canvas-container w-full hidden">
                             <canvas id="skillChart"></canvas>
                         </div>
                         <p class="text-center text-gray-700 text-sm leading-relaxed max-w-md">
@@ -423,7 +431,7 @@
                     <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
                         <!-- ATS Score Gauge -->
-                        <div class="relative w-48 h-48">
+                        <div class="relative w-full">
                             <canvas id="atsScoreChart"></canvas>
                             <div id="atsScoreText"
                                 class="absolute inset-0 flex items-center justify-center text-lg font-semibold text-yellow-600">
@@ -525,7 +533,7 @@
                 </div>
 
 
-                <!-- Detailed Analysis in tabular format -->
+                <!-- Detailed Analysis in tabular format
                 <div id="detailedAnalysisContainer" class="w-full max-w-3xl hidden">
                     <h3 class="text-lg font-medium mb-3 text-gray-800 text-center">Detailed Analysis</h3>
                     <div class="overflow-hidden border border-gray-200 rounded-lg shadow">
@@ -573,16 +581,75 @@
                                     <td class="px-6 py-4 text-sm text-gray-700">
                                         <ul id="sectionsToImproveList" class="list-disc pl-5 space-y-1"></ul>
                                     </td>
-                                </tr>
-                                <!-- <tr class="bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">ATS Score
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-700" id="atsFeedback"></td>
-                                </tr> -->
+                                </tr>                                
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> -->
+
+                <!-- Detailed Analysis in Tabular Format -->
+<div id="detailedAnalysisContainer" class="w-full max-w-4xl hidden mx-auto font-[Lora]">
+  <h3 class="text-2xl font-semibold mb-6 text-center text-yellow-600"
+      style="font-family: 'Playfair Display', serif;">
+    Detailed Resume Analysis
+  </h3>
+
+  <div class="overflow-hidden rounded-xl border-l-4 border-yellow-500 shadow-xl bg-white">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-yellow-50">
+        <tr>
+          <th scope="col"
+              class="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider"
+              style="font-family: 'Playfair Display', serif;">
+            Category
+          </th>
+          <th scope="col"
+              class="px-6 py-4 text-left text-xs font-semibold text-yellow-800 uppercase tracking-wider"
+              style="font-family: 'Playfair Display', serif;">
+            Details
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-100 text-sm text-gray-700">
+
+        <tr>
+          <td class="px-6 py-4 font-medium text-indigo-600">Overall Assessment</td>
+          <td class="px-6 py-4" id="overallAssessment"></td>
+        </tr>
+
+        <tr class="bg-gray-50">
+          <td class="px-6 py-4 font-medium text-indigo-600">Priority Skills to Add</td>
+          <td class="px-6 py-4">
+            <ul id="prioritySkillsList" class="list-disc pl-5 space-y-1"></ul>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="px-6 py-4 font-medium text-indigo-600">Quick Fixes</td>
+          <td class="px-6 py-4">
+            <ul id="quickFixes" class="list-disc pl-5 space-y-1"></ul>
+          </td>
+        </tr>
+
+        <tr class="bg-gray-50">
+          <td class="px-6 py-4 font-medium text-indigo-600">Recommendations</td>
+          <td class="px-6 py-4">
+            <ul id="recommendationsList" class="list-disc pl-5 space-y-1"></ul>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="px-6 py-4 font-medium text-indigo-600">Sections to Improve</td>
+          <td class="px-6 py-4">
+            <ul id="sectionsToImproveList" class="list-disc pl-5 space-y-1"></ul>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
                 <!-- Requirement Gap Analysis -->
                 <div id="requirementAnalysisContainer" class="hidden mt-6">
