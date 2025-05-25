@@ -96,37 +96,48 @@
         }
 
         /* Glassmorphism + ensure contrast */
-        .navbar {
+        .navbars {
             background-color: rgba(255, 255, 255, 0.3) !important;
             backdrop-filter: blur(4px);
-        }            
-
-        body {
-            padding-top: 70px;            
-        }      
+        }         
     </style>
 </head>
 
 <!-- <body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen"> -->
 
-<body class="pt-16 bg-gradient-to-br from-red-50 to-gray-200 min-h-screen">        
+<body class="bg-gradient-to-br from-red-50 to-gray-200 min-h-screen">        
 
-    <nav class="navbar top-0 left-0 w-full bg-white backdrop-blur-md shadow-md z-50">
-        <div class="container-fuild mx-auto flex items-center justify-between py-4 px-6">
-            <div class="flex items-center space-x-3">
+    <nav class="navbars top-0 left-0 w-full bg-white backdrop-blur-md shadow-md z-50">
+        <div class="container-fuild mx-auto flex items-center justify-between py-2 px-2">
+            <div class="flex items-center space-x-2">
                 <i class="fas fa-file-alt text-red-600 text-2xl"></i>
                 <div>
                     <h1 class="text-white text-2xl font-semibold">SURAT</h1>
                     <p class="text-white text-sm opacity-75">Resume Analyzer & Tuner</p>
                 </div>
             </div>
-            <div class="hidden md:flex items-center space-x-6">
+            <div class="hidden md:flex items-center space-x-2">
                 <a href="#" class="btn text-white hover:opacity-90 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition">                                
                     Analyze Now                
                 </a>
             </div>
         </div>
     </nav>
+
+    <section id="hero" class="h-screen relative flex items-center justify-center bg-gradient-to-br from-red-600 to-red-400 text-white overflow-hidden">
+  <!-- slight dark overlay -->
+  <div class="absolute inset-0 bg-black opacity-30"></div>
+
+  <div class="relative z-10 px-4 text-center">
+    <h1 class="text-6xl md:text-8xl font-bold leading-tight">SURAT</h1>
+    <p class="mt-4 text-xl md:text-2xl opacity-90">
+      Shoolini University Resume Analyzer &amp; Tuner
+    </p>
+    <a href="#jobDescription" class="mt-8 inline-block px-6 py-3 bg-white text-red-600 font-semibold rounded-lg shadow-lg hover:bg-gray-100 transition">
+      Get Started
+    </a>
+  </div>
+</section>
 
     <!-- <nav class="bg-red-600 shadow-md w-full">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -141,7 +152,7 @@
             <a href="#" class="text-gray-700 hover:text-blue-600 transition">FAQ</a>
         </div>
         </div>
-    </nav> -->
+    </nav> -->    
 
     <div class="container mx-auto px-4 py-8 main-container">
 
