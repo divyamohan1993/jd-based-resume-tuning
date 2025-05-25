@@ -388,7 +388,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
+                <div id="bothchartsinside" class="hidden grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
                     <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
 
@@ -424,7 +424,7 @@
                 </div>
 
 
-                <!-- Matched and Unmatched Skills side by side -->
+                <!-- Matched and Unmatched Skills side by side
                 <div id="matchedSkillsContainer" class="hidden w-full mb-6">
                     <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                         <i class="fas fa-cogs mr-2 text-indigo-600"></i>Skill Matching
@@ -439,7 +439,34 @@
                             <ul id="unmatchedSkillsList" class="list-disc pl-5 space-y-1 text-red-600"></ul>
                         </div>
                     </div>
+                </div> -->
+
+                <!-- Matched and Unmatched Skills -->
+                <div id="matchedSkillsContainer" class="hidden w-full mb-12 font-[Lora]">
+                    <h2 class="text-2xl font-semibold mb-6 flex items-center text-gray-800"
+                        style="font-family: 'Playfair Display', serif;">
+                        <i class="fas fa-cogs mr-3 text-yellow-500"></i> Skill Matching
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Matched Skills -->
+                        <div class="bg-white p-6 rounded-xl border border-yellow-300 shadow-sm">
+                            <h3 class="text-lg font-semibold text-emerald-700 mb-3"
+                                style="font-family: 'Playfair Display', serif;">Matched Skills</h3>
+                            <ul id="matchedSkillsList"
+                                class="list-disc pl-5 space-y-1 text-emerald-600 text-sm leading-relaxed"></ul>
+                        </div>
+
+                        <!-- Missing Skills -->
+                        <div class="bg-white p-6 rounded-xl border border-yellow-300 shadow-sm">
+                            <h3 class="text-lg font-semibold text-rose-700 mb-3"
+                                style="font-family: 'Playfair Display', serif;">Missing Skills</h3>
+                            <ul id="unmatchedSkillsList"
+                                class="list-disc pl-5 space-y-1 text-rose-600 text-sm leading-relaxed"></ul>
+                        </div>
+                    </div>
                 </div>
+
 
                 <!-- <div id="metricsDashboardContainer" class="hidden bg-white rounded-xl p-6 card mb-8 space-y-10">
                     <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
@@ -872,6 +899,7 @@
             document.getElementById('loadingAnalysis').classList.remove('hidden');
             document.getElementById('emotion').classList.add('hidden');
             document.getElementById('matchPercentageContainer').classList.add('hidden');
+            document.getElementById('bothchartsinside').classList.add('hidden');
             document.getElementById('chartContainer').classList.add('hidden');
             document.getElementById('matchedSkillsContainer').classList.add('hidden');
             document.getElementById('categoryAnalysisContainer').classList.add('hidden');
@@ -904,6 +932,7 @@
                     document.getElementById('loadingAnalysis').classList.add('hidden');
                     document.getElementById('emotion').classList.remove('hidden');
                     document.getElementById('matchPercentageContainer').classList.remove('hidden');
+                    document.getElementById('bothchartsinside').classList.remove('hidden');
                     document.getElementById('chartContainer').classList.remove('hidden');
                     document.getElementById('matchedSkillsContainer').classList.remove('hidden');
 
