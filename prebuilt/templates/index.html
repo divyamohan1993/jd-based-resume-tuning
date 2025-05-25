@@ -388,30 +388,32 @@
 
             <!-- MODIFIED ANALYSIS LAYOUT - Center-aligned pyramid structure -->
             <div class="flex flex-col items-center">
-                <!-- Emotion and Overall Match -->
-                <div class="mb-8 text-center font-[Lora]">
-
-                    <!-- Emotion Text -->
-                    <div id="emotion" class="text-center text-3xl font-bold mb-6 text-yellow-600 hidden"
-                        style="font-family: 'Playfair Display', serif;">
-                        <!-- Emotion dynamically injected here -->
-                    </div>
-
-                    <!-- Overall Match Progress -->
-                    <div id="matchPercentageContainer" class="hidden w-full max-w-md mx-auto">
-                        <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
-                            <span>Overall Match</span>
-                            <span id="matchPercentageText" class="text-yellow-600">0%</span>
+                <!-- Hero Feedback -->
+                <div id="feedbackHero" class="mb-12 text-center font-[Lora] hidden">
+                    <h2 id="heroEmotion" class="text-5xl md:text-6xl font-bold text-yellow-600 mb-4"
+                        style="font-family:'Playfair Display', serif;"></h2>
+                    <p id="heroHeadline" class="text-2xl md:text-3xl text-gray-800 mb-6"></p>
+                    <div
+                        class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-xl mx-auto text-sm font-medium text-gray-700">
+                        <div>
+                            <div id="heroSkillPct" class="text-3xl font-semibold text-yellow-600"></div>
+                            <div>Skill Fit</div>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-5 shadow-inner">
-                            <div id="matchPercentageBar"
-                                class="bg-gradient-to-r from-yellow-400 to-yellow-600 h-5 rounded-full transition-all duration-700 ease-in-out"
-                                style="width: 0%">
-                            </div>
+                        <div>
+                            <div id="heroATSPct" class="text-3xl font-semibold text-yellow-600"></div>
+                            <div>ATS Fit</div>
+                        </div>
+                        <div>
+                            <div id="heroCustomizationPct" class="text-3xl font-semibold text-yellow-600"></div>
+                            <div>Customization</div>
+                        </div>
+                        <div>
+                            <div id="heroQuantPct" class="text-3xl font-semibold text-yellow-600"></div>
+                            <div>Quantification</div>
                         </div>
                     </div>
-
                 </div>
+
 
                 <div id="bothchartsinside" class="hidden grid lg:grid-cols-3 gap-8 mb-16 font-[Lora]">
 
@@ -419,10 +421,10 @@
                     <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
                         <div class="relative w-full">
-                            <canvas id="atsScoreChart"></canvas>                            
+                            <canvas id="atsScoreChart"></canvas>
                             <div id="atsScoreText"
                                 class="absolute inset-0 flex items-center justify-center text-lg font-semibold text-yellow-600">
-                            </div>                            
+                            </div>
                         </div>
                         <p class="text-center text-gray-700 text-sm">
                             <span class="font-semibold text-yellow-700">ATS Compatibility</span><br>
@@ -1002,8 +1004,7 @@
 
             // Show loading
             document.getElementById('loadingAnalysis').classList.remove('hidden');
-            document.getElementById('emotion').classList.add('hidden');
-            document.getElementById('matchPercentageContainer').classList.add('hidden');
+            document.getElementById('feedbackHero').classList.add('hidden');            
             document.getElementById('bothchartsinside').classList.add('hidden');
             // document.getElementById('chartContainer').classList.add('hidden');
             document.getElementById('matchedSkillsContainer').classList.add('hidden');
@@ -1035,8 +1036,7 @@
 
                     // Hide loading, show results
                     document.getElementById('loadingAnalysis').classList.add('hidden');
-                    document.getElementById('emotion').classList.remove('hidden');
-                    document.getElementById('matchPercentageContainer').classList.remove('hidden');
+                    document.getElementById('feedbackHero').classList.remove('hidden');                    
                     document.getElementById('bothchartsinside').classList.remove('hidden');
                     // document.getElementById('chartContainer').classList.remove('hidden');
                     document.getElementById('matchedSkillsContainer').classList.remove('hidden');
@@ -1202,39 +1202,43 @@
             }
         }
 
+        // map percentage → emotion text + corresponding tailwind classes
+        function getEmotionMeta(match) {
+            if (match < 10) return { text: "Critical gaps—urgent revision", textClass: "text-red-600", barClass: "bg-red-600" };
+            if (match < 20) return { text: "Major gaps—significant revisions", textClass: "text-orange-600", barClass: "bg-orange-600" };
+            if (match < 30) return { text: "Substantial gaps—considerable improvement needed", textClass: "text-amber-600", barClass: "bg-amber-600" };
+            if (match < 40) return { text: "Moderate gaps—targeted enhancements advised", textClass: "text-yellow-600", barClass: "bg-yellow-600" };
+            if (match < 50) return { text: "Minor gaps—additional details recommended", textClass: "text-lime-600", barClass: "bg-lime-600" };
+            if (match < 60) return { text: "Fair match—strengthen content", textClass: "text-green-600", barClass: "bg-green-600" };
+            if (match < 70) return { text: "Good match—minor refinements suggested", textClass: "text-emerald-600", barClass: "bg-emerald-600" };
+            if (match < 80) return { text: "Strong match—well-aligned", textClass: "text-teal-600", barClass: "bg-teal-600" };
+            if (match < 90) return { text: "Excellent match—very well-suited", textClass: "text-sky-600", barClass: "bg-sky-600" };
+            return { text: "Outstanding fit—exceptional alignment", textClass: "text-blue-600", barClass: "bg-blue-600" };
+        }
         function displayAnalysis(data) {
-            // Display emotion
-            const emotionElement = document.getElementById('emotion');
-            emotionElement.textContent = data.emotion;
-            emotionElement.className = 'mt-4 text-center text-xl font-bold';
 
-            // Set color based on percentage
-            if (data.match_percentage < 40) {
-                emotionElement.classList.add('text-red-500');
-            } else if (data.match_percentage < 70) {
-                emotionElement.classList.add('text-yellow-500');
-            } else {
-                emotionElement.classList.add('text-green-500');
-            }
+            const mp = Math.round(data.match_percentage);
+            const meta = getEmotionMeta(mp);
 
-            // Update match percentage
-            document.getElementById('matchPercentageText').textContent = `${Math.round(data.match_percentage)}%`;
-            const percentageBar = document.getElementById('matchPercentageBar');
-            percentageBar.style.width = '0%';
+            // ─── HERO FEEDBACK ────────────────────────────────────────────────
+            // 1) Emotion headline
+            const heroEmotion = document.getElementById('heroEmotion');
+            heroEmotion.textContent = meta.text;
+            heroEmotion.className = `text-5xl md:text-6xl font-bold ${meta.textClass}`;
 
-            // Trigger reflow to animate width change
-            void percentageBar.offsetWidth;
-            percentageBar.style.width = `${data.match_percentage}%`;
+            // 2) Sub-headline: overall assessment (1–2 sentences)
+            const heroHeadline = document.getElementById('heroHeadline');
+            heroHeadline.textContent = data.detailed_analysis.overall_assessment;
 
-            // Set color based on percentage
-            percentageBar.className = 'h-4 rounded-full progress-bar';
-            if (data.match_percentage < 40) {
-                percentageBar.classList.add('bg-red-500');
-            } else if (data.match_percentage < 70) {
-                percentageBar.classList.add('bg-yellow-500');
-            } else {
-                percentageBar.classList.add('bg-green-500');
-            }
+            // 3) Four key % metrics
+            document.getElementById('heroSkillPct').textContent = `${mp}%`;
+            document.getElementById('heroATSPct').textContent = `${data.detailed_analysis.ats_score}%`;
+            document.getElementById('heroCustomizationPct').textContent = `${data.detailed_analysis.customization_level}%`;
+            document.getElementById('heroQuantPct').textContent = `${data.detailed_analysis.quantification_strength}%`;
+
+            // Now show the hero and hide the old emotion if you like:
+            document.getElementById('feedbackHero').classList.remove('hidden');
+
 
             // Update skill lists
             const matchedList = document.getElementById('matchedSkillsList');

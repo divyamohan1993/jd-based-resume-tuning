@@ -47,7 +47,7 @@ def extract_text_from_file(file):
                 if out and out[-1] != "":
                     out.append("")
                 continue
-    
+
             # force break before ALL-CAPS headings or lines ending with colon
             is_heading = stripped.isupper() or stripped.endswith(":")
             if is_heading:
@@ -55,18 +55,18 @@ def extract_text_from_file(file):
                     out.append("")      # blank line before heading
                 out.append(stripped)
                 continue
-    
+
             # list item?
             if stripped.startswith(("-", "*", "•", "–")):
                 out.append(stripped)
                 continue
-    
+
             # continuation of previous paragraph?
             if out and out[-1] and not re.search(r"[\.:\?!]$", out[-1]):
                 out[-1] = out[-1] + " " + stripped
             else:
                 out.append(stripped)
-    
+
         return "\n".join(out).strip()
 
 
@@ -902,12 +902,27 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
     detailed_analysis = _clean_md(detailed_analysis)
 
     # Emotion-based response (for backward compatibility)
-    if match_percentage < 40:
-        emotion = "😢 Needs improvement"
+    # Emotion-based response (for backward compatibility)
+    if match_percentage < 10:
+        emotion = "Critical gaps—urgent revision"
+    elif match_percentage < 20:
+        emotion = "Major gaps—significant revisions"
+    elif match_percentage < 30:
+        emotion = "Substantial gaps—considerable improvement needed"
+    elif match_percentage < 40:
+        emotion = "Moderate gaps—targeted enhancements advised"
+    elif match_percentage < 50:
+        emotion = "Minor gaps—additional details recommended"
+    elif match_percentage < 60:
+        emotion = "Fair match—strengthen content"
     elif match_percentage < 70:
-        emotion = "😊 Good potential"
+        emotion = "Good match—minor refinements suggested"
+    elif match_percentage < 80:
+        emotion = "Strong match—well-aligned"
+    elif match_percentage < 90:
+        emotion = "Excellent match—very well-suited"
     else:
-        emotion = "🎉 Excellent match!"
+        emotion = "Outstanding fit—exceptional alignment"
      
     return {
         "matched_skills": matched_skills,
