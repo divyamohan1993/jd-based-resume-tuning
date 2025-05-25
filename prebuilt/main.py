@@ -18,6 +18,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import re
+import html
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication
@@ -28,6 +29,34 @@ genai.configure(api_key="your_api_key")  # Replace with your actual API Key
 geminimodel = "gemini-2.5-pro-preview-05-06"
 geminimodel = "gemini-1.5-pro-latest"
 geminimodel = "gemini-2.5-flash-preview-05-20"
+
+
+# Precompile control‐char regex
+_CONTROL_CHARS = re.compile(r'[\x00-\x1F\x7F-\x9F]')
+
+def sanitize_input(text: str, max_length: int = 50000) -> str:
+    """
+    1) Truncate to a safe length.
+    2) Strip out C0/C1 control characters.
+    3) HTML-escape <, >, &, quotes.
+    4) Escape sequences that might break your prompts or code.
+    """
+    # 1) limit overall length
+    text = text[:max_length]
+
+    # 2) drop control characters
+    text = _CONTROL_CHARS.sub('', text)
+
+    # 3) HTML-escape so '<script>' becomes '&lt;script&gt;'
+    text = html.escape(text)
+
+    # 4) neutralize code‐fences, triple-quotes, backticks, braces, dollars, backslashes
+    for seq in ('```', '"""', "'''", '`', '{', '}', '$', '\\'):
+        safe = ''.join('\\' + ch for ch in seq)
+        text = text.replace(seq, safe)
+
+    return text
+
 
 def extract_text_from_file(file):
     """
@@ -959,7 +988,7 @@ def home():
 @app.route('/extract_skills', methods=['POST'])
 def get_skills():
     data = request.get_json()
-    job_description = data.get('job_description', '')
+    job_description = sanitize_input(data.get('job_description', ''))
     skills_by_category, all_skills = extract_skills(job_description)
     return jsonify({
         "skills": all_skills,
@@ -984,10 +1013,10 @@ def upload_resume():
 @app.route('/analyze_resume', methods=['POST'])
 def analyze():
     data = request.get_json()
-    resume_text = data.get('resume_text', '')
-    skills = data.get('skills', [])
-    skills_by_category = data.get('skills_by_category', None)
-    job_description = data.get('job_description', '')
+    resume_text = sanitize_input(data.get('resume_text', ''))
+    skills = sanitize_input(data.get('skills', []))
+    skills_by_category = sanitize_input(data.get('skills_by_category', None))
+    job_description = sanitize_input(data.get('job_description', ''))
     
     analysis_result = analyze_resume(resume_text, job_description, skills, skills_by_category)
     
@@ -998,10 +1027,10 @@ def analyze():
 @app.route('/tailor_resume', methods=['POST'])
 def tailor():
     # Modified to accept form data instead of JSON
-    resume_text = request.form.get('resume_text', '')
-    job_description = request.form.get('job_description', '')
-    output_format = request.form.get('output_format', 'pdf')
-    template_style = request.form.get('template_style', 'professional')
+    resume_text = sanitize_input(request.form.get('resume_text', ''))
+    job_description = sanitize_input(request.form.get('job_description', ''))
+    output_format = sanitize_input(request.form.get('output_format', 'pdf'))
+    template_style = sanitize_input(request.form.get('template_style', 'professional'))
     
     tailored_resume = tailor_resume(resume_text, job_description)
     
@@ -1021,8 +1050,8 @@ def tailor():
 @app.route('/preview_resume', methods=['POST'])
 def preview_resume():
     data = request.get_json()
-    resume_text = data.get('resume_text', '')
-    job_description = data.get('job_description', '')
+    resume_text = sanitize_input(data.get('resume_text', ''))
+    job_description = sanitize_input(data.get('job_description', ''))
     
     tailored_resume = tailor_resume(resume_text, job_description)
     return jsonify({"tailored_resume": tailored_resume})
