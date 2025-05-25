@@ -147,10 +147,12 @@
                 <textarea id="jobDescription"
                     class="w-full text-area-tall p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 text-gray-700"
                     placeholder="Paste job description here..."></textarea>
+
                 <button id="extractSkillsBtn"
-                    class="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center font-medium">
+                    class="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center font-medium hidden">
                     <i class="fas fa-magic mr-2"></i>Extract Skills
                 </button>
+
                 <div id="skillsTable" class="mt-4 max-height-box hidden">
                     <h3 class="text-lg font-medium mb-2 text-gray-800">Key Skills</h3>
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -333,11 +335,8 @@
                     <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                         <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Metrics Dashboard
                     </h2>
-                    <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"></div>
                     <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     </div>
-
-
                 </div>
 
 
@@ -644,6 +643,39 @@
                 });
         });
 
+        // auto‐extract skills as you type in JD
+        const jdInput = document.getElementById('jobDescription');
+        let jdTimeout;
+        jdInput.addEventListener('input', () => {
+            clearTimeout(jdTimeout);
+            jdTimeout = setTimeout(() => {
+                const jd = jdInput.value.trim();
+                if (!jd) return;
+
+                // show spinner, hide old table
+                document.getElementById('loadingSkills').classList.remove('hidden');
+                document.getElementById('skillsTable').classList.add('hidden');
+
+                fetch('/extract_skills', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ job_description: jd })
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        extractedSkills = data.skills || [];
+                        skillsByCategory = data.skills_by_category || {};
+                        displayCategorizedSkills(skillsByCategory);
+                        displaySkills(extractedSkills);
+                    })
+                    .catch(console.error)
+                    .finally(() => {
+                        document.getElementById('loadingSkills').classList.add('hidden');
+                        document.getElementById('skillsTable').classList.remove('hidden');
+                    });
+            }, 2000);
+        });
+
         // Upload Resume
         document.getElementById('resumeUpload').addEventListener('change', function (event) {
             const file = event.target.files[0];
@@ -703,6 +735,7 @@
             document.getElementById('matchedSkillsContainer').classList.add('hidden');
             document.getElementById('categoryAnalysisContainer').classList.add('hidden');
             document.getElementById('detailedAnalysisContainer').classList.add('hidden');
+            document.getElementById('metricsDashboardContainer').classList.add('hidden');
 
             fetch('/analyze_resume', {
                 method: 'POST',
