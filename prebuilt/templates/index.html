@@ -199,6 +199,13 @@
             box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
         }
     </style>
+
+    <style>
+        #matchPercentageBar {
+            box-shadow: 0 0 8px rgba(234, 179, 8, 0.5);
+        }
+    </style>
+
 </head>
 
 <body class="bg-gradient-to-br from-red-200 to-gray-200 min-h-screen">
@@ -373,21 +380,31 @@
 
             <!-- MODIFIED ANALYSIS LAYOUT - Center-aligned pyramid structure -->
             <div class="flex flex-col items-center">
-                <!-- Emotion and Overall Match at the top -->
-                <div class="mb-4 text-center">
-                    <div id="emotion" class="text-center text-2xl font-bold mb-4 hidden"></div>
+                <!-- Emotion and Overall Match -->
+                <div class="mb-8 text-center font-[Lora]">
 
-                    <div id="matchPercentageContainer" class="mb-6 hidden w-full max-w-md">
-                        <div class="flex justify-between text-sm font-medium">
-                            <span class="text-gray-700">Overall Match</span>
-                            <span id="matchPercentageText" class="text-blue-600">0%</span>
+                    <!-- Emotion Text -->
+                    <div id="emotion" class="text-center text-3xl font-bold mb-6 text-yellow-600 hidden"
+                        style="font-family: 'Playfair Display', serif;">
+                        <!-- Emotion dynamically injected here -->
+                    </div>
+
+                    <!-- Overall Match Progress -->
+                    <div id="matchPercentageContainer" class="hidden w-full max-w-md mx-auto">
+                        <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                            <span>Overall Match</span>
+                            <span id="matchPercentageText" class="text-yellow-600">0%</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-5 mt-1">
-                            <div id="matchPercentageBar" class="bg-green-500 h-5 rounded-full progress-bar"
-                                style="width: 0%"></div>
+                        <div class="w-full bg-gray-200 rounded-full h-5 shadow-inner">
+                            <div id="matchPercentageBar"
+                                class="bg-gradient-to-r from-yellow-400 to-yellow-600 h-5 rounded-full transition-all duration-700 ease-in-out"
+                                style="width: 0%">
+                            </div>
                         </div>
                     </div>
+
                 </div>
+
                 <div id="bothchartsinside" class="hidden grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
                     <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
