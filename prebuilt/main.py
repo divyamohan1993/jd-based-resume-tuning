@@ -34,7 +34,10 @@ def extract_text_from_file(file):
     Extract text from uploaded file (PDF or DOCX) and then normalize spacing & lists.
     """
     def normalize_extracted_text(text: str) -> str:
-        """Preserve bullets, join soft-wrapped lines, collapse blanks."""
+        """
+        Preserve bullets, break on headings (ALL CAPS or ending in ':'),
+        join soft-wrapped lines, collapse blanks.
+        """
         lines = text.splitlines()
         out = []
         for ln in lines:
@@ -44,16 +47,28 @@ def extract_text_from_file(file):
                 if out and out[-1] != "":
                     out.append("")
                 continue
+    
+            # force break before ALL-CAPS headings or lines ending with colon
+            is_heading = stripped.isupper() or stripped.endswith(":")
+            if is_heading:
+                if out and out[-1] != "":
+                    out.append("")      # blank line before heading
+                out.append(stripped)
+                continue
+    
             # list item?
             if stripped.startswith(("-", "*", "•", "–")):
                 out.append(stripped)
                 continue
+    
             # continuation of previous paragraph?
             if out and out[-1] and not re.search(r"[\.:\?!]$", out[-1]):
                 out[-1] = out[-1] + " " + stripped
             else:
                 out.append(stripped)
+    
         return "\n".join(out).strip()
+
 
     filename = file.filename.lower()
     raw = ""
