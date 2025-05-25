@@ -305,7 +305,7 @@
                 <div id="loadingSkills" class="mt-4 text-center hidden">
                     <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-600">
                     </div>
-                    <p class="mt-2 text-yellow-600">Extracting skills...</p>
+                    <p class="mt-2 text-yellow-600">Processing JD... please wait.</p>
                 </div>
 
                 <div id="jdSuccessMessage" class="mt-4 text-green-600 text-center font-medium hidden">
@@ -315,7 +315,11 @@
 
             <div id="resumeSection"
                 class="disabled bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
-                <div>
+                <div id="lockedmessagependingjd" class="my-4 p-4 text-red-600 text-center text-2xl ">
+                        Please paste Job Description first to unlock this section.
+                </div>
+
+                <div id="lockedmessagependingjdinlocker" class="hidden">
                     <h2 class="text-2xl font-semibold mb-4 flex items-center text-gray-800"
                         style="font-family: 'Playfair Display', serif;">
                         <i class="fas fa-file-alt mr-3 text-yellow-600"></i> Your Resume
@@ -331,6 +335,8 @@
                             class="flex-1 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition">Paste
                             Text</button>
                     </div>
+
+                    
 
                     <!-- Upload Box -->
                     <div id="uploadBox" class="hidden mb-4">
@@ -366,7 +372,7 @@
                 <div id="loadingResume" class="mt-4 text-center hidden">
                     <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-600">
                     </div>
-                    <p class="mt-2 text-yellow-600">Processing resume...</p>
+                    <p class="mt-2 text-yellow-600">Processing resume... please wait.</p>
                 </div>
             </div>
 
@@ -934,6 +940,9 @@
                         showSuccessToast('JD Processed. Now Please upload your resume.');
                         const resumeSection = document.getElementById('resumeSection');
                         resumeSection.classList.remove('disabled');
+
+                        document.getElementById('lockedmessagependingjd').classList.add('hidden');;
+                        document.getElementById('lockedmessagependingjdinlocker').classList.remove('hidden');;
 
                         document.getElementById('loadingSkills').classList.add('hidden');
 
