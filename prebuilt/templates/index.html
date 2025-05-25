@@ -227,6 +227,10 @@
                     </div>
                     <p class="mt-2 text-yellow-600">Extracting skills...</p>
                 </div>
+
+                <div id="jdSuccessMessage" class="mt-4 text-green-600 text-center font-medium hidden">
+                    Key skills successfully extracted!
+                </div>
             </div>
 
             <!-- Resume Upload Section -->
@@ -277,8 +281,8 @@
                 <textarea id="hiddenSkills" class="hidden"></textarea>
 
                 <!-- Success Message -->
-                <div id="successMessage" class="mt-4 text-green-600 text-center font-medium hidden">
-                    ✅ Key skills successfully extracted!
+                <div id="resumeSuccessMessage" class="mt-4 text-green-600 text-center font-medium hidden">
+                    Resume uploaded successfully!
                 </div>
 
                 <div id="loadingResume" class="mt-4 text-center hidden">
@@ -646,7 +650,7 @@
                 // Update hidden input value
                 document.getElementById('templateStyle').value = this.dataset.template;
             });
-        });        
+        });
 
         // auto‐extract skills as you type in JD
         const jdInput = document.getElementById('jobDescription');
@@ -676,13 +680,10 @@
                     .catch(console.error)
                     .finally(() => {
                         // store them in your hidden textarea, show + auto-hide banner
-                        storeExtractedSkills(extractedSkills);
-
-                        // (you said “don’t display the skillsTable”) so hide it entirely
-                        document.getElementById('skillsTable').classList.add('hidden');
-
-                        // Hide loading
+                        showJdSuccess();
                         document.getElementById('loadingSkills').classList.add('hidden');
+
+                        document.getElementById('skillsTable').classList.add('hidden');
                     });
             }, 2000);
         });
@@ -708,6 +709,9 @@
                         alert(data.error);
                     } else {
                         document.getElementById('resumeText').value = data.resume_text;
+                        const msg = document.getElementById("resumeSuccessMessage");
+                        msg.classList.remove("hidden");
+                        setTimeout(() => msg.classList.add("hidden"), 3000);
                     }
                     document.getElementById('loadingResume').classList.add('hidden');
                 })
@@ -1482,14 +1486,10 @@
 
 
         // Example: Simulate storing extracted skills
-        function storeExtractedSkills(skills) {
-            document.getElementById("hiddenSkills").value = skills.join(", ");
-            const msg = document.getElementById("successMessage");
+        function showJdSuccess() {
+            const msg = document.getElementById("jdSuccessMessage");
             msg.classList.remove("hidden");
-
-            setTimeout(() => {
-                msg.classList.add("hidden");
-            }, 3000); // hide after 3 sec
+            setTimeout(() => msg.classList.add("hidden"), 3000);
         }
 
         // On page load: both boxes hidden; neutral button styles
