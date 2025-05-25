@@ -193,7 +193,7 @@
     </nav>
 
 
-    <div class="container mx-auto px-4 py-8 main-container" id="allstartshere">     
+    <div class="container mx-auto px-4 py-8 main-container" id="allstartshere">
 
         <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
 
@@ -211,11 +211,6 @@
                     <textarea id="jobDescription"
                         class="w-full h-40 p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-600 transition duration-300 text-gray-700 resize-none"
                         placeholder="Paste job description here..."></textarea>
-
-                    <button id="extractSkillsBtn"
-                        class="mt-4 w-full bg-yellow-600 text-white py-3 rounded-xl hover:bg-yellow-700 transition duration-300 flex items-center justify-center font-semibold hidden">
-                        <i class="fas fa-magic mr-2"></i>Extract Skills
-                    </button>
                 </div>
 
                 <div id="skillsTable" class="mt-6 hidden">
@@ -235,6 +230,7 @@
             </div>
 
             <!-- Resume Upload Section -->
+            <!-- Resume Upload Section -->
             <div
                 class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
                 <div>
@@ -242,34 +238,47 @@
                         style="font-family: 'Playfair Display', serif;">
                         <i class="fas fa-file-alt mr-3 text-yellow-600"></i> Your Resume
                     </h2>
-                    <p class="text-gray-600 mb-4 text-sm">
-                        Upload your resume or paste the content to analyze it against the job requirements.
-                    </p>
+                    <p class="text-gray-600 mb-4 text-sm">Choose one method to submit your resume:</p>
 
-                    <label
-                        class="flex flex-col border-2 border-dashed border-yellow-300 hover:bg-yellow-50 hover:border-yellow-500 p-12 text-center rounded-xl transition duration-300 cursor-pointer mb-4">
-                        <div class="flex flex-col items-center justify-center">
-                            <i
-                                class="fas fa-cloud-upload-alt text-4xl text-yellow-400 group-hover:text-yellow-600 transition duration-300"></i>
-                            <p class="text-sm text-yellow-500 group-hover:text-yellow-600 mt-2 transition duration-300">
-                                Upload PDF or DOCX
-                            </p>
-                        </div>
-                        <input type="file" class="hidden" id="resumeUpload" accept=".pdf,.docx" />
-                    </label>
+                    <!-- Toggle Buttons -->
+                    <div class="flex space-x-4 mb-4">
+                        <button id="chooseUpload"
+                            class="flex-1 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition">Upload
+                            File</button>
+                        <button id="chooseText"
+                            class="flex-1 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 transition">Paste
+                            Text</button>
+                    </div>
 
-                    <textarea id="resumeText"
-                        class="w-full h-40 p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-600 transition duration-300 text-gray-700 resize-none"
-                        placeholder="Or paste resume text here..."></textarea>
+                    <!-- Upload Box -->
+                    <div id="uploadBox" class="hidden mb-4">
+                        <label
+                            class="flex flex-col border-2 border-dashed border-yellow-300 hover:bg-yellow-50 hover:border-yellow-500 p-6 text-center rounded-xl transition duration-300 cursor-pointer h-40 justify-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <i
+                                    class="fas fa-cloud-upload-alt text-4xl text-yellow-400 group-hover:text-yellow-600 transition duration-300"></i>
+                                <p
+                                    class="text-sm text-yellow-500 group-hover:text-yellow-600 mt-2 transition duration-300">
+                                    Upload PDF or DOCX</p>
+                            </div>
+                            <input type="file" class="hidden" id="resumeUpload" accept=".pdf,.docx" />
+                        </label>
+                    </div>
+
+                    <!-- Paste Text Box -->
+                    <div id="textBox" class="hidden mb-4">
+                        <textarea id="resumeText"
+                            class="w-full h-40 p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-600 transition duration-300 text-gray-700 resize-none"
+                            placeholder="Paste resume text here..."></textarea>
+                    </div>
                 </div>
 
-                <!-- Dummy resume preview box to balance visual weight -->
-                <div class="mt-6 hidden" id="resumePreviewBox">
-                    <h3 class="text-lg font-semibold mb-2 text-gray-800">Parsed Summary</h3>
-                    <div
-                        class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm max-h-40 overflow-y-auto text-sm text-gray-600">
-                        <p id="parsedResumeSummary">Resume summary will appear here...</p>
-                    </div>
+                <!-- Hidden Key Skills Storage -->
+                <textarea id="hiddenSkills" class="hidden"></textarea>
+
+                <!-- Success Message -->
+                <div id="successMessage" class="mt-4 text-green-600 text-center font-medium hidden">
+                    ✅ Key skills successfully extracted!
                 </div>
 
                 <div id="loadingResume" class="mt-4 text-center hidden">
@@ -278,6 +287,7 @@
                     <p class="mt-2 text-yellow-600">Processing resume...</p>
                 </div>
             </div>
+
 
         </div>
 
@@ -636,59 +646,7 @@
                 // Update hidden input value
                 document.getElementById('templateStyle').value = this.dataset.template;
             });
-        });
-
-        // Extract Skills
-        document.getElementById('extractSkillsBtn').addEventListener('click', function () {
-            const jobDescription = document.getElementById('jobDescription').value.trim();
-
-            if (!jobDescription) {
-                alert('Please enter a job description');
-                return;
-            }
-
-            // Show loading indicator
-            document.getElementById('loadingSkills').classList.remove('hidden');
-            document.getElementById('skillsTable').classList.add('hidden');
-
-            // Make API request
-            fetch('/extract_skills', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ job_description: jobDescription }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    extractedSkills = data.skills || [];
-
-                    // Support for categorized skills
-                    if (data.skills_by_category) {
-                        skillsByCategory = data.skills_by_category;
-                        displayCategorizedSkills(skillsByCategory);
-                    } else {
-                        // For backward compatibility, create basic categories
-                        skillsByCategory = {
-                            "Technical Skills": extractedSkills.filter((_, i) => i % 3 === 0),
-                            "Soft Skills": extractedSkills.filter((_, i) => i % 3 === 1),
-                            "Domain Knowledge": extractedSkills.filter((_, i) => i % 3 === 2)
-                        };
-                        displayCategorizedSkills(skillsByCategory);
-                    }
-
-                    displaySkills(extractedSkills);
-
-                    // Hide loading, show results
-                    document.getElementById('loadingSkills').classList.add('hidden');
-                    document.getElementById('skillsTable').classList.remove('hidden');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error extracting skills. Please try again.');
-                    document.getElementById('loadingSkills').classList.add('hidden');
-                });
-        });
+        });        
 
         // auto‐extract skills as you type in JD
         const jdInput = document.getElementById('jobDescription');
@@ -717,8 +675,14 @@
                     })
                     .catch(console.error)
                     .finally(() => {
+                        // store them in your hidden textarea, show + auto-hide banner
+                        storeExtractedSkills(extractedSkills);
+
+                        // (you said “don’t display the skillsTable”) so hide it entirely
+                        document.getElementById('skillsTable').classList.add('hidden');
+
+                        // Hide loading
                         document.getElementById('loadingSkills').classList.add('hidden');
-                        document.getElementById('skillsTable').classList.remove('hidden');
                     });
             }, 2000);
         });
@@ -1486,6 +1450,60 @@
             "retina_detect": true
         });
     </script>
+
+    <script>
+        // Toggle between upload and paste
+        const chooseUpload = document.getElementById('chooseUpload');
+        const chooseText = document.getElementById('chooseText');
+        const uploadBox = document.getElementById('uploadBox');
+        const textBox = document.getElementById('textBox');
+
+        chooseUpload.addEventListener('click', () => {
+            uploadBox.classList.remove('hidden');
+            textBox.classList.add('hidden');
+
+            chooseUpload.classList.add('bg-yellow-600', 'text-white');
+            chooseUpload.classList.remove('bg-yellow-100', 'text-yellow-800');
+
+            chooseText.classList.remove('bg-yellow-600', 'text-white');
+            chooseText.classList.add('bg-yellow-100', 'text-yellow-800');
+        });
+
+        chooseText.addEventListener('click', () => {
+            textBox.classList.remove('hidden');
+            uploadBox.classList.add('hidden');
+
+            chooseText.classList.add('bg-yellow-600', 'text-white');
+            chooseText.classList.remove('bg-yellow-100', 'text-yellow-800');
+
+            chooseUpload.classList.remove('bg-yellow-600', 'text-white');
+            chooseUpload.classList.add('bg-yellow-100', 'text-yellow-800');
+        });
+
+
+        // Example: Simulate storing extracted skills
+        function storeExtractedSkills(skills) {
+            document.getElementById("hiddenSkills").value = skills.join(", ");
+            const msg = document.getElementById("successMessage");
+            msg.classList.remove("hidden");
+
+            setTimeout(() => {
+                msg.classList.add("hidden");
+            }, 3000); // hide after 3 sec
+        }
+
+        // On page load: both boxes hidden; neutral button styles
+        window.addEventListener('DOMContentLoaded', () => {
+            uploadBox.classList.add('hidden');
+            textBox.classList.add('hidden');
+
+            // Optionally, you can pre-activate the Upload button:
+            // chooseUpload.classList.add('bg-yellow-600','text-white');
+        });
+
+
+    </script>
+
 
 </body>
 
