@@ -134,9 +134,24 @@
 
         .toast-success {
             position: fixed;
-            top: 80px;
+            bottom: 80px;
             right: 30px;
             background-color: #10b981;
+            /* emerald-500 */
+            color: white;
+            padding: 12px 24px;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 500;
+            z-index: 1000;
+            animation: fadeInOut 4s ease-in-out forwards;
+        }
+
+        .toast-danger {
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            background-color: #b91010;
             /* emerald-500 */
             color: white;
             padding: 12px 24px;
@@ -163,6 +178,11 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+        }
+
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -206,7 +226,7 @@
         </div>
     </nav> -->
 
-    <nav class="bg-gradient-to-b from-black via-gray-900 to-yellow-900 shadow-lg w-full border-b border-yellow-600">
+    <nav class="bg-gradient-to-l from-black via-gray-900 to-yellow-900 shadow-lg w-full border-b border-yellow-600">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
 
             <!-- Left Logo + Title -->
@@ -240,7 +260,7 @@
                         Paste the job description to identify key skills and requirements.
                     </p>
                     <textarea id="jobDescription"
-                        class="w-full h-55 p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-600 transition duration-300 text-gray-700 resize-none"
+                        class="w-full h-60 p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-600 transition duration-300 text-gray-700 resize-none"
                         placeholder="Paste job description here..."></textarea>
                 </div>
 
@@ -264,8 +284,8 @@
                 </div>
             </div>
 
-            <div
-                class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
+            <div id="resumeSection"
+                class="disabled bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
                 <div>
                     <h2 class="text-2xl font-semibold mb-4 flex items-center text-gray-800"
                         style="font-family: 'Playfair Display', serif;">
@@ -326,7 +346,7 @@
 
         <!-- Analysis Section - Middle Row -->
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- <div class="bg-white rounded-xl p-6 card mb-8"> -->
+            <!-- <div class="bg-white rounded-xl p-6 card mb-8"> -->
             <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                 <i class="fas fa-chart-bar mr-2 text-green-600"></i>Resume Analysis
             </h2>
@@ -334,7 +354,7 @@
                 Analyze how well your resume matches the job requirements and get insights.
             </p>
             <button id="analyzeResumeBtn"
-                class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center font-medium mb-6">
+                class="hidden w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center font-medium mb-6">
                 <i class="fas fa-chart-bar mr-2"></i>Analyze Matching
             </button>
 
@@ -712,6 +732,9 @@
                         // store them in your hidden textarea, show + auto-hide banner
                         showJdSuccess();
                         showSuccessToast('Key skills extracted!');
+                        const resumeSection = document.getElementById('resumeSection');
+                        resumeSection.classList.remove('disabled');
+
                         document.getElementById('loadingSkills').classList.add('hidden');
 
                         document.getElementById('skillsTable').classList.add('hidden');
@@ -742,7 +765,13 @@
                         document.getElementById('resumeText').value = data.resume_text;
                         const msg = document.getElementById("resumeSuccessMessage");
                         msg.classList.remove("hidden");
+                        showSuccessToast('Resume Uploaded Successfully!');
                         // setTimeout(() => msg.classList.add("hidden"), 3000);
+                        
+                        // automatically analyze once both JD and Resume are loaded:
+                        if (extractedSkills.length && document.getElementById('resumeText').value.trim()) {
+                            triggerAnalysis();
+                        }
                     }
                     document.getElementById('loadingResume').classList.add('hidden');
                 })
@@ -753,7 +782,7 @@
                 });
         });
         // Analyze Resume
-        document.getElementById('analyzeResumeBtn').addEventListener('click', function () {
+        function triggerAnalysis() {
             const resumeText = document.getElementById('resumeText').value.trim();
 
             if (!resumeText) {
@@ -833,7 +862,7 @@
                     alert('Error analyzing resume. Please try again.');
                     document.getElementById('loadingAnalysis').classList.add('hidden');
                 });
-        });
+            }
 
         // Preview Resume
         document.getElementById('previewResumeBtn').addEventListener('click', function () {
@@ -1535,6 +1564,19 @@
         function showSuccessToast(message) {
             const toast = document.createElement('div');
             toast.className = 'toast-success';
+            toast.innerText = message;
+
+            const container = document.getElementById('toastContainer');
+            container.innerHTML = ''; // clear any previous
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+        function showDangerToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-danger';
             toast.innerText = message;
 
             const container = document.getElementById('toastContainer');
