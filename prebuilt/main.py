@@ -92,12 +92,22 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 import re
 import html
+import os
+from dotenv import load_dotenv
+
+# Load variables from .env into os.environ
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication
 
-# Configure Gemini API
-genai.configure(api_key="your_api_key")  # Replace with your actual API Key
+# Now read your key
+GEMINI_KEY = os.getenv("GEMINI_KEY")
+if not GEMINI_KEY:
+    raise RuntimeError("Missing GEMINI_KEY in environment")
+
+# Configure Gemini
+genai.configure(api_key=GEMINI_KEY)
 
 geminimodel = "gemini-2.5-pro-preview-05-06"
 geminimodel = "gemini-1.5-pro-latest"
