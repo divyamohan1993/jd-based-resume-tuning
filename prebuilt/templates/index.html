@@ -8,6 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
         html,
         body {
@@ -17,8 +20,13 @@
             overflow-x: hidden;
         }
 
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
         .template-option.active .template-preview {
-            border-color: #3B82F6;
+            /* border-color: #3B82F6; */
+            border-color: #CE1126;
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
         }
 
@@ -68,6 +76,18 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
+        .card {
+            border-radius: .75rem;
+        }
+
+        h2 {
+            letter-spacing: 0.5px;
+        }
+
+        .btn {
+            font-weight: 600;
+        }
+
         /* tailwind-playable utility classes */
         .metric-card {
             @apply bg-white p-4 rounded-lg shadow hover:shadow-lg transition-transform;
@@ -79,12 +99,16 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen">
-    <nav class="bg-white shadow-md w-full">
+<!-- <body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen"> -->
+
+<body class="bg-gradient-to-br from-red-50 to-gray-200 min-h-screen">
+    <nav class="bg-red-600 shadow-md w-full">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center">
-                <i class="fas fa-file-alt text-blue-600 text-2xl mr-3"></i>
-                <h1 class="text-2xl font-bold text-gray-800">AI Resume Optimizer</h1>
+                <!-- <i class="fas fa-file-alt text-blue-600 text-2xl mr-3"></i> -->
+                <i class="fas fa-file-alt text-white text-2xl mr-3"></i>
+                <h1 class="text-2xl font-bold text-white">SURAT</h1>
+                Shoolini University Resume Analysis and Tuner
             </div>
             <div class="hidden md:flex space-x-4">
                 <a href="#" class="text-gray-700 hover:text-blue-600 transition">How It Works</a>
@@ -95,49 +119,11 @@
     </nav>
 
     <div class="container mx-auto px-4 py-8 main-container">
-        <!-- Step indicator -->
-        <div class="mb-8">
-            <div class="flex items-center justify-center">
-                <div class="flex items-center">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 text-white">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                    <div class="ml-4 mr-8">
-                        <div class="text-sm font-medium text-blue-600">Step 1</div>
-                        <div class="text-sm text-gray-600">Job Description</div>
-                    </div>
-                </div>
-                <div class="flex-1 h-1 bg-gray-200">
-                    <div class="h-1 bg-blue-600" style="width: 66%"></div>
-                </div>
-                <div class="flex items-center ml-8 mr-8">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 text-white">
-                        <i class="fas fa-file-alt"></i>
-                    </div>
-                    <div class="ml-4 mr-8">
-                        <div class="text-sm font-medium text-blue-600">Step 2</div>
-                        <div class="text-sm text-gray-600">Your Resume</div>
-                    </div>
-                </div>
-                <div class="flex-1 h-1 bg-gray-200">
-                    <div class="h-1 bg-blue-600" style="width: 33%"></div>
-                </div>
-                <div class="flex items-center">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-gray-300 text-white">
-                        <i class="fas fa-magic"></i>
-                    </div>
-                    <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-500">Step 3</div>
-                        <div class="text-sm text-gray-600">Optimize</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Input Section - Top Row with Job Description and Resume side by side -->
         <div class="grid lg:grid-cols-2 gap-8 mb-8">
             <!-- Job Description Section -->
-            <div class="bg-white rounded-xl p-6 card">
+            <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
                 <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                     <i class="fas fa-briefcase mr-2 text-blue-600"></i>Job Description
                 </h2>
@@ -169,7 +155,7 @@
             </div>
 
             <!-- Resume Upload Section -->
-            <div class="bg-white rounded-xl p-6 card">
+            <div class="bg-white rounded-xl p-6 card border-t-4 border-red-600">
                 <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                     <i class="fas fa-file-alt mr-2 text-purple-600"></i>Your Resume
                 </h2>
@@ -1149,12 +1135,12 @@
                     datasets: [{
                         data: [matched, unmatched],
                         backgroundColor: [
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(255, 99, 132, 0.8)'
+                            'rgba(206,17,38,0.8)',
+                            'rgba(239,68,68,0.8)'
                         ],
                         borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(255, 99, 132, 1)'
+                            'rgba(206,17,38,1)',
+                            'rgba(239,68,68,1)'
                         ],
                         borderWidth: 1
                     }]
