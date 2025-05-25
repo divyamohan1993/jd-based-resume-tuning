@@ -16,6 +16,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora&display=swap"
+        rel="stylesheet">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -27,8 +30,31 @@
             overflow-x: hidden;
         }
 
+        .taste {
+            background: linear-gradient(to right, #d4af37 0%, #fff 50%, #d4af37 100%);
+            background-size: 200% auto;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Lora', serif;
+        }
+
+        body {
+            /* font-family: 'Poppins', sans-serif; */
         }
 
         .template-option.active .template-preview {
@@ -103,51 +129,38 @@
     </style>
 </head>
 
-<!-- <body class="bg-gradient-to-br from-blue-100 to-indigo-100 min-h-screen"> -->
-
-<body class="bg-gradient-to-br from-red-50 to-gray-200 min-h-screen">
-
-    <!-- <section id="hero" class="h-screen relative flex items-center justify-center bg-black text-white overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-30"></div>
-
-        <div class="relative z-10 px-4 text-center">
-            <img class="img-fluid spacing-y-5 my-5" src="https://shooliniuniversity.com/assets/images/logo.png"/>
-            <h1 class="text-6xl md:text-8xl leading-tight">SURAT</h1>
-            <p class="mt-4 text-xl md:text-2xl opacity-90">Shoolini University Resume Analyzer &amp; Tuner</p>
-            <a href="#allstartshere"
-                class="mt-8 inline-block px-6 py-3 bg-white text-red-600 font-semibold rounded-lg shadow-lg hover:bg-gray-100 transition">
-                Get Started
-            </a>
-        </div>
-    </section>-->
+<body class="bg-gradient-to-br from-red-200 to-gray-200 min-h-screen">
 
     <section id="hero" class="h-screen relative flex items-center justify-center bg-black text-white overflow-hidden">
 
-  <!-- Animated Gold Particles -->
-  <div id="luxury-bg" class="absolute inset-0 z-0"></div>
+        <!-- Animated Gold Particles -->
+        <div id="luxury-bg" class="absolute inset-0 z-0"></div>
 
-  <!-- Dark Overlay -->
-  <div class="absolute inset-0 bg-black opacity-30 z-10"></div>
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black opacity-30 z-10"></div>
 
-  <!-- Foreground Content -->
-  <div class="relative z-20 px-4 text-center">
-    <img class="img-fluid my-5 mx-auto max-h-20" src="https://shooliniuniversity.com/assets/images/logo.png" />
-    <h1 class="text-6xl md:text-8xl font-bold tracking-wide text-yellow-300">SURAT</h1>
-    <p class="mt-4 text-xl md:text-2xl text-yellow-100">Shoolini University Resume Analyzer &amp; Tuner</p>
-    <a href="#allstartshere"
-      class="mt-8 inline-block px-6 py-3 bg-white text-yellow-800 font-semibold rounded-lg shadow-lg hover:bg-yellow-100 transition">
-      Get Started
-    </a>
-  </div>
+        <!-- Foreground Content -->
+        <div class="relative z-20 px-4 text-center">
+            <img class="img-fluid my-5 mx-auto max-h-20" src="https://shooliniuniversity.com/assets/images/logo.png" />
+            <h1 class="text-6xl md:text-8xl font-bold taste" style="font-family: 'Playfair Display', serif;">SURAT</h1>
+            <p class="mt-4 text-xl md:text-2xl text-yellow-100" style="font-family: 'Lora', serif;">
+                Shoolini University Resume Analyzer &amp; Tuner
+            </p>
+            <a href="#allstartshere"
+                class="mt-8 inline-block px-6 py-3 bg-white text-yellow-800 font-semibold rounded-lg shadow-lg hover:bg-yellow-100 transition">
+                Get Started
+            </a>
+        </div>
 
-</section>
+    </section>
+
 
 
     <nav class="bg-red-600 shadow-md w-full">
         <div class="container mx-auto px-6 py-3 flex justify-between items-center">
             <div class="flex items-center">
                 <i class="fas fa-file-alt text-white text-2xl mr-3"></i>
-                <h1 class="text-2xl font-bold text-white">SURAT</h1>                
+                <h1 class="text-2xl font-bold text-white">SURAT</h1>
             </div>
             <div class="hidden md:flex space-x-4">
                 <p>Shoolini University Resume Analyzer and Tuner</p>
@@ -1396,36 +1409,36 @@
     </script>
 
 
-<script>
-  particlesJS('luxury-bg', {
-    "particles": {
-      "number": { "value": 60 },
-      "color": { "value": "#d4af37" },
-      "shape": { "type": "circle" },
-      "opacity": { "value": 0.5 },
-      "size": { "value": 4 },
-      "line_linked": {
-        "enable": true,
-        "distance": 120,
-        "color": "#d4af37",
-        "opacity": 0.4,
-        "width": 1
-      },
-      "move": {
-        "enable": true,
-        "speed": 1.5,
-        "direction": "none",
-        "out_mode": "out"
-      }
-    },
-    "interactivity": {
-      "events": {
-        "onhover": { "enable": true, "mode": "repulse" }
-      }
-    },
-    "retina_detect": true
-  });
-</script>
+    <script>
+        particlesJS('luxury-bg', {
+            "particles": {
+                "number": { "value": 60 },
+                "color": { "value": "#d4af37" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 4 },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 120,
+                    "color": "#d4af37",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.5,
+                    "direction": "none",
+                    "out_mode": "out"
+                }
+            },
+            "interactivity": {
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
 
 </body>
 
