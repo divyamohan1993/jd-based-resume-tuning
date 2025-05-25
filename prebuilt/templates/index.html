@@ -199,15 +199,6 @@
             box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
         }
     </style>
-
-    <style>
-        .canvas-container:hover,
-        .w-24:hover {
-            transition: box-shadow 0.3s ease-in-out;
-            box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
-            border-radius: 1rem;
-        }
-    </style>
 </head>
 
 <body class="bg-gradient-to-br from-red-200 to-gray-200 min-h-screen">
@@ -411,7 +402,9 @@
                             This chart visualizes the overlap between your resume and the job description’s key skills,
                             highlighting what you already have and what you need to improve.
                         </p>
-
+                    </div>
+                    <div
+                        class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
                         <!-- ATS Score Gauge -->
                         <div class="relative w-24 h-24">
                             <canvas id="atsScoreChart"></canvas>
@@ -421,7 +414,8 @@
                         </div>
                         <p class="text-center text-gray-700 text-sm leading-relaxed max-w-md">
                             <span class="font-semibold text-yellow-700"
-                                style="font-family: 'Playfair Display', serif;">ATS Compatibility</span><br>
+                                style="font-family: 'Playfair Display', serif;">ATS
+                                Compatibility</span><br>
                             An estimate of how well your resume aligns with automated filtering systems based on
                             formatting, keyword usage, and structure.
                         </p>
