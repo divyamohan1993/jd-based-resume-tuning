@@ -200,6 +200,14 @@
         }
     </style>
 
+    <style>
+        .canvas-container:hover,
+        .w-24:hover {
+            transition: box-shadow 0.3s ease-in-out;
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
+            border-radius: 1rem;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-to-br from-red-200 to-gray-200 min-h-screen">
@@ -389,16 +397,43 @@
                         </div>
                     </div>
                 </div>
+                <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
+                    <div
+                        class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
 
-                <!-- Chart in the center -->
-                <div class="canvas-container hidden w-full max-w-lg mb-6" id="chartContainer">
-                    <canvas id="skillChart"></canvas>
+                        <!-- Skill Match Doughnut Chart -->
+                        <div id="chartContainer" class="canvas-container w-full max-w-xs hidden">
+                            <canvas id="skillChart"></canvas>
+                        </div>
+                        <p class="text-center text-gray-700 text-sm leading-relaxed max-w-md">
+                            <span class="font-semibold text-yellow-700"
+                                style="font-family: 'Playfair Display', serif;">Skill Match</span><br>
+                            This chart visualizes the overlap between your resume and the job description’s key skills,
+                            highlighting what you already have and what you need to improve.
+                        </p>
+
+                        <!-- ATS Score Gauge -->
+                        <div class="relative w-24 h-24">
+                            <canvas id="atsScoreChart"></canvas>
+                            <div id="atsScoreText"
+                                class="absolute inset-0 flex items-center justify-center text-lg font-semibold text-yellow-600">
+                            </div>
+                        </div>
+                        <p class="text-center text-gray-700 text-sm leading-relaxed max-w-md">
+                            <span class="font-semibold text-yellow-700"
+                                style="font-family: 'Playfair Display', serif;">ATS Compatibility</span><br>
+                            An estimate of how well your resume aligns with automated filtering systems based on
+                            formatting, keyword usage, and structure.
+                        </p>
+
+                    </div>
                 </div>
+
 
                 <!-- Matched and Unmatched Skills side by side -->
                 <div id="matchedSkillsContainer" class="hidden w-full mb-6">
                     <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
-                        <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Skill Matching
+                        <i class="fas fa-cogs mr-2 text-indigo-600"></i>Skill Matching
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg border border-green-200">
@@ -412,7 +447,7 @@
                     </div>
                 </div>
 
-                <!-- <div id="metricsDashboardContainer" class="bg-white rounded-xl p-6 card mb-8 space-y-10">
+                <!-- <div id="metricsDashboardContainer" class="hidden bg-white rounded-xl p-6 card mb-8 space-y-10">
                     <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                         <i class="fas fa-tachometer-alt mr-2 text-indigo-600"></i>Human Analysis
                     </h2>
@@ -427,12 +462,12 @@
                 </div> -->
 
                 <div id="metricsDashboardContainer"
-                    class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 card mb-12 space-y-10 border-l-4 border-yellow-400 shadow-xl pt-6 max-w-screen-xl mx-auto">
+                    class="hidden bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 card mb-12 space-y-10 border-l-4 border-yellow-400 shadow-xl pt-6 max-w-screen-xl mx-auto">
 
                     <!-- Header -->
                     <h2 class="text-2xl font-semibold flex items-center text-gray-800"
                         style="font-family: 'Playfair Display', serif;">
-                        <i class="fas fa-tachometer-alt mr-3 text-yellow-500"></i> Human Analysis
+                        <i class="fas fa-user-tie mr-3 text-yellow-500"></i> Human Analysis
                     </h2>
 
                     <!-- Info Message -->
@@ -506,20 +541,6 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-700" id="atsFeedback"></td>
                                 </tr> -->
-
-                                <tr class="bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">ATS Score
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-700">
-                                        <div class="relative w-24 h-24 mx-auto">
-                                            <canvas id="atsScoreChart"></canvas>
-                                            <!-- overlay the percentage text -->
-                                            <div id="atsScoreText"
-                                                class="absolute inset-0 flex items-center justify-center text-lg font-semibold">
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
