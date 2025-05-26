@@ -1141,97 +1141,122 @@ def json_resume_to_text(resume_json):
 
 def convert_json_to_docx(resume_json):
     """
-    Build a one‑page A4 DOCX (0.5" margins) from structured resume JSON.
+    Build a one-page A4 DOCX (0.5" margins) from structured resume JSON.
+    Robustly handles dicts, lists, strings, and list-of-dicts.
     """
     doc = docx.Document()
-    
-    # Set default font to Times New Roman for the whole document
+    # Default font
     style = doc.styles['Normal']
-    font = style.font
-    font.name = 'Times New Roman'
+    style.font.name = 'Times New Roman'
 
     sec = doc.sections[0]
-    # A4 dimensions
-    sec.page_height = Mm(297);
-    sec.page_width  = Mm(210);
-    # 0.5" margins all around
+    # A4 size
+    sec.page_height = Mm(297)
+    sec.page_width  = Mm(210)
+    # 0.5" margins
     for m in ('top_margin','bottom_margin','left_margin','right_margin'):
         setattr(sec, m, Inches(0.5))
 
-    # --- Contact Information ---
-    raw_contact = resume_json.get("Contact Information", [])
-    # normalize to list of strings
-    if isinstance(raw_contact, dict):
-        contact_items = [str(v) for v in raw_contact.values()]
-    elif isinstance(raw_contact, (list, tuple)):
-        contact_items = [str(x) for x in raw_contact]
-    else:
-        contact_items = [str(raw_contact)]
-
-    if contact_items:
-        # Name (largest)
+    def add_heading(text):
         p = doc.add_paragraph()
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        r = p.add_run(contact_items[0])
-        r.font.size = Pt(16)
-        r.bold = True
-        # Remaining contacts in small text
-        if len(contact_items) > 1:
-            p = doc.add_paragraph()
-            r.font.name = 'Times New Roman'
-            r = p.add_run(' | '.join(contact_items[1:]))
-            r.font.size = Pt(9)
-    # add a blank line
-    # doc.add_paragraph()
-    
+        run = p.add_run(text)
+        run.font.size = Pt(14)
+        run.bold = True
+        return p
 
-    # --- Other Sections ---
-    for title in [ "Professional Summary", "Education", "Skills", "Projects", "Achievements", "Certifications"]:
-        entries = resume_json.get(title, [])
+    def add_par(text, indent=0, bold=False, bullet=False, center=False, size=9):
+        style = 'List Bullet' if bullet else None
+        p = doc.add_paragraph(style=style)
+        if center:
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        if indent:
+            p.paragraph_format.left_indent = Inches(indent)
+        run = p.add_run(text)
+        run.font.name = 'Times New Roman'
+        run.font.size = Pt(size)
+        run.bold = bold
+        return p
+
+    # --- Contact Information ---
+    raw_contact = resume_json.get('Contact Information', [])
+    if isinstance(raw_contact, dict):
+        items = [f"{k}: {v}" for k,v in raw_contact.items() if v]
+    elif isinstance(raw_contact, (list, tuple)):
+        items = [str(x) for x in raw_contact]
+    else:
+        items = [str(raw_contact)]
+
+    if items:
+        # Name
+        add_par(items[0], bold=True, center=True, size=16)
+        # Contacts
+        if len(items) > 1:
+            add_par(' | '.join(items[1:]), center=True)
+    doc.add_paragraph()
+
+    # --- Sections ---
+    for section in ['Professional Summary','Education','Skills','Projects','Achievements','Certifications']:
+        entries = resume_json.get(section)
         if not entries:
             continue
-        # Section heading
-        h = doc.add_paragraph()
-        rh = h.add_run(title)
-        rh.font.size = Pt(12)
-        rh.bold = True        
-        # Content formatting by section
-        if title == "Professional Summary":
-            # Merge all summary lines into one paragraph
+        add_heading(section)
+        # Summary
+        if section == 'Professional Summary':
             text = entries if isinstance(entries, str) else ' '.join(entries)
-            p = doc.add_paragraph()
-            p.paragraph_format.left_indent = Inches(0.2)
-            r = p.add_run(text)
-            r.font.name = 'Times New Roman'
-            r.font.size = Pt(9)
+            add_par(text, indent=0.2)
 
-        elif title == "Education":
-            # One entry per line, no bullets
-            for line in entries:
-                p = doc.add_paragraph()
-                p.paragraph_format.left_indent = Inches(0.2)
-                run = p.add_run(line)
-                run.font.name = 'Times New Roman'
-                run.font.size = Pt(9)
+        # Education
+        elif section == 'Education':
+            if isinstance(entries, dict):
+                for k,v in entries.items():
+                    add_par(f"{k}: {v}", indent=0.2)
+            elif isinstance(entries, (list, tuple)):
+                for e in entries:
+                    add_par(str(e), indent=0.2)
+            else:
+                add_par(str(entries), indent=0.2)
 
-        elif title == "Skills":
-            # comma-separated skills in one line
-            text = ', '.join(entries)
-            p = doc.add_paragraph()
-            p.paragraph_format.left_indent = Inches(0.2)
-            run = p.add_run(text)
-            run.font.name = 'Times New Roman'
-            run.font.size = Pt(9)
+        # Skills
+        elif section == 'Skills':
+            if isinstance(entries, dict):
+                for cat, lst in entries.items():
+                    text = f"{cat}: {', '.join(lst)}" if isinstance(lst, (list, tuple)) else f"{cat}: {lst}"
+                    add_par(text, indent=0.2)
+            elif isinstance(entries, (list, tuple)):
+                add_par(', '.join(entries), indent=0.2)
+            else:
+                add_par(str(entries), indent=0.2)
 
+        # Projects
+        elif section == 'Projects':
+            if isinstance(entries, list):
+                for proj in entries:
+                    if isinstance(proj, dict):
+                        header = ' | '.join(filter(None,[proj.get('Title'),proj.get('Role'),proj.get('Dates')]))
+                        add_par(header, bold=True, indent=0.2)
+                        desc = proj.get('Description', [])
+                        if isinstance(desc, list):
+                            for d in desc:
+                                add_par(str(d), bullet=True, indent=0.4)
+                        else:
+                            add_par(str(desc), bullet=True, indent=0.4)
+                    else:
+                        add_par(str(proj), indent=0.2)
+            else:
+                add_par(str(entries), indent=0.2)
+
+        # Achievements & Certifications
         else:
-            # other list-based sections (Projects, Achievements, Certifications)
-            for line in entries:
-                p = doc.add_paragraph(style='List Bullet')
-                run = p.add_run(line)
-                run.font.name = 'Times New Roman'
-                run.font.size = Pt(9)
+            if isinstance(entries, list):
+                for e in entries:
+                    add_par(str(e), bullet=True, indent=0.2)
+            elif isinstance(entries, dict):
+                for k,v in entries.items():
+                    add_par(f"{k}: {v}", indent=0.2)
+            else:
+                add_par(str(entries), indent=0.2)
 
-    # save to bytes
+    # Save to buffer
     buf = io.BytesIO()
     doc.save(buf)
     buf.seek(0)
@@ -1344,15 +1369,42 @@ You are an expert ATS-tuning AI. Given this **Job Description**:
 And this **raw candidate info**:
 {raw}
 
-Create a JSON object with exactly these keys in order:
-"Contact Information","Professional Summary","Education","Skills","Projects","Achievements","Certifications"
+Create a JSON object with exactly these keys in this order:
 
+1. "Contact Information" (object) with:
+   - "Name": string  
+   - "Email": string  
+   - "Phone": string  
+   - optionally "LinkedIn", "GitHub", "Portfolio": strings  
 
-• Make every bullet keyword-rich to score high on the JD's ATS scan.  
-• Use measurable outcomes where possible.
-• Use action verbs where possible.
-• Quantify the achievements and demonstrate the impact with concrete evidence.
-• Keep it to one A4 page, ATS-safe, editable.  
+2. "Professional Summary": a single string  
+
+3. "Education" (object) with:
+   - "Degree": string  
+   - "University": string  
+   - "Years": string  
+   - optionally "CGPA" or "GPA": string  
+
+4. "Skills" (object), where each key is a category (string) and each value is an array of strings.  
+   e.g. "Programming Languages": ["Python", "Java"], etc.  
+
+5. "Projects": array of objects, each containing:
+   - "Title": string  
+   - "Role": string  
+   - "Dates": string  
+   - "Description": array of strings  
+
+6. "Achievements": array of strings  
+
+7. "Certifications": array of strings
+
+Rule:
+- Plain JSON only (no markdown, no extra keys)
+- Make every bullet keyword-rich to score high on the JD's ATS scan.
+- Use measurable outcomes where possible.
+- Use action verbs where possible.
+- Quantify the achievements and demonstrate the impact with concrete evidence.
+- Keep it to one A4 page, ATS-safe, editable.  
 """
     response = model.generate_content(prompt)
     text = response.text.strip()
