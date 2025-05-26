@@ -1138,6 +1138,82 @@ def convert_json_to_docx(resume_json):
     buf.seek(0)
     return buf
 
+def convert_json_to_docx(resume_json):
+    """
+    Build a one‑page A4 DOCX (0.5" margins) from structured resume JSON.
+    """
+    doc = docx.Document()
+    sec = doc.sections[0]
+    # A4 dimensions
+    sec.page_height = Mm(297);
+    sec.page_width  = Mm(210);
+    # 0.5" margins all around
+    for m in ('top_margin','bottom_margin','left_margin','right_margin'):
+        setattr(sec, m, Inches(0.5))
+
+    # --- Contact Information ---
+    raw_contact = resume_json.get("Contact Information", [])
+    # normalize to list of strings
+    if isinstance(raw_contact, dict):
+        contact_items = [str(v) for v in raw_contact.values()]
+    elif isinstance(raw_contact, (list, tuple)):
+        contact_items = [str(x) for x in raw_contact]
+    else:
+        contact_items = [str(raw_contact)]
+
+    if contact_items:
+        # Name (largest)
+        p = doc.add_paragraph()
+        r = p.add_run(contact_items[0])
+        r.font.size = Pt(16)
+        r.bold = True
+        # Remaining contacts in small text
+        if len(contact_items) > 1:
+            p = doc.add_paragraph()
+            r = p.add_run(' | '.join(contact_items[1:]))
+            r.font.size = Pt(9)
+    # add a blank line
+    doc.add_paragraph()
+
+    # --- Other Sections ---
+    for title in [ "Professional Summary", "Education", "Skills", "Projects", "Achievements", "Certifications"]:
+        entries = resume_json.get(title, [])
+        if not entries:
+            continue
+        # Section heading
+        h = doc.add_paragraph()
+        rh = h.add_run(title)
+        rh.font.size = Pt(12)
+        rh.bold = True
+        # Content
+        if title == "Education":
+            for line in entries:
+                p = doc.add_paragraph(line)
+                p.paragraph_format.left_indent = Inches(0.2)
+                p.runs[0].font.size = Pt(9)
+        elif title == "Professional Summary":
+            for line in entries:
+                p = doc.add_paragraph(line)
+                p.paragraph_format.left_indent = Inches(0.2)
+                p.runs[0].font.size = Pt(9)
+        elif title == "Skills":
+            for line in entries:
+                p = doc.add_paragraph(line)
+                p.paragraph_format.left_indent = Inches(0.2)
+                p.runs[0].font.size = Pt(9)
+        else:
+            for line in entries:
+                p = doc.add_paragraph(style='List Bullet')
+                r = p.add_run(line)
+                r.font.size = Pt(9)
+
+    # save to bytes
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    return buf
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
