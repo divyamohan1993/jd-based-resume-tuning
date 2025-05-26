@@ -1151,11 +1151,11 @@
                     return res.blob();
                 })
                 .then(blob => {
-                    // auto-download the PDF
+                    // auto-download the DOCX
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'My_Resume.pdf';
+                    a.download = 'My_Resume.docx';
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
