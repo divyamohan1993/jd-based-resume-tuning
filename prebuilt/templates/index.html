@@ -445,7 +445,7 @@
 
     <div class="container mx-auto px-4 py-8 main-container" id="allstartshere">
 
-        <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]">
+        <div class="grid lg:grid-cols-2 gap-8 mb-16 font-[Lora]" id="splitscreenjdresumecapturinglocation">
             <div
                 class="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
                 <div>
@@ -485,6 +485,15 @@
                 class="disabled bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 shadow-xl border-l-4 border-yellow-500 flex flex-col justify-between">
                 <div id="lockedmessagependingjd" class="my-4 p-4 text-red-600 text-center text-2xl ">
                     Please paste Job Description first to unlock this section.
+                </div>
+
+                <!-- ==== Resume Prompt ==== -->
+                <div id="resumePrompt" class="hidden text-center space-y-4">
+                    <p class="text-gray-800 text-lg">Do you have an existing resume?</p>
+                    <div class="flex justify-center space-x-4">
+                        <button id="hasResumeYes" class="px-4 py-2 bg-green-500 text-white rounded-lg">Yes</button>
+                        <button id="hasResumeNo" class="px-4 py-2 bg-red-500   text-white rounded-lg">No</button>
+                    </div>
                 </div>
 
                 <div id="lockedmessagependingjdinlocker" class="hidden">
@@ -1172,7 +1181,8 @@
                         resumeSection.classList.remove('disabled');
 
                         document.getElementById('lockedmessagependingjd').classList.add('hidden');;
-                        document.getElementById('lockedmessagependingjdinlocker').classList.remove('hidden');;
+                        // document.getElementById('lockedmessagependingjdinlocker').classList.remove('hidden');
+                        document.getElementById('resumePrompt').classList.remove('hidden');
 
                         document.getElementById('loadingSkills').classList.add('hidden');
 
@@ -2100,6 +2110,20 @@
 
             // Optionally, you can pre-activate the Upload button:
             // chooseUpload.classList.add('bg-yellow-600','text-white');
+            
+            // document.getElementById('buildResumeSection').classList.add('hidden'); // keep builder hidden
+
+            // Yes → show the normal upload/paste UI
+            document.getElementById('hasResumeYes').addEventListener('click', () => {
+                document.getElementById('resumePrompt').classList.add('hidden');
+                document.getElementById('lockedmessagependingjdinlocker').classList.remove('hidden');
+            });
+
+            // No → hide the resume section entirely, show builder
+            document.getElementById('hasResumeNo').addEventListener('click', () => {            
+                document.getElementById('splitscreenjdresumecapturinglocation').classList.add('hidden');
+                document.getElementById('buildResumeSection').classList.remove('hidden');
+            });
         });
 
         function showSuccessToast(message) {
