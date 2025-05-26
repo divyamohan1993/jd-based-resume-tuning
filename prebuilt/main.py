@@ -80,6 +80,7 @@ import json
 import mammoth
 import PyPDF2
 import docx
+from docx import Document
 import itertools
 from docx.shared import Pt, Inches, Mm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -1142,20 +1143,19 @@ def json_resume_to_text(resume_json):
 def convert_json_to_docx(resume_json):
     """
     Build a one-page A4 DOCX (0.5" margins) from structured resume JSON.
-    Robustly handles dicts, lists, strings, and list-of-dicts.
+    Handles various JSON shapes: strings, lists, dicts, list-of-dicts.
     """
-    doc = docx.Document()
-    # Default font
-    style = doc.styles['Normal']
-    style.font.name = 'Times New Roman'
+    doc = Document()
+    # Set default font
+    normal_style = doc.styles['Normal']
+    normal_style.font.name = 'Times New Roman'
 
+    # Configure A4 and margins
     sec = doc.sections[0]
-    # A4 size
     sec.page_height = Mm(297)
     sec.page_width  = Mm(210)
-    # 0.5" margins
-    for m in ('top_margin','bottom_margin','left_margin','right_margin'):
-        setattr(sec, m, Inches(0.5))
+    for margin in ('top_margin','bottom_margin','left_margin','right_margin'):
+        setattr(sec, margin, Inches(0.5))
 
     def add_heading(text):
         p = doc.add_paragraph()
@@ -1177,10 +1177,10 @@ def convert_json_to_docx(resume_json):
         run.bold = bold
         return p
 
-    # --- Contact Information ---
+    # Contact Information
     raw_contact = resume_json.get('Contact Information', [])
     if isinstance(raw_contact, dict):
-        items = [f"{k}: {v}" for k,v in raw_contact.items() if v]
+        items = [f"{k}: {v}" for k, v in raw_contact.items() if v]
     elif isinstance(raw_contact, (list, tuple)):
         items = [str(x) for x in raw_contact]
     else:
@@ -1189,18 +1189,21 @@ def convert_json_to_docx(resume_json):
     if items:
         # Name
         add_par(items[0], bold=True, center=True, size=16)
-        # Contacts
+        # Other contacts
         if len(items) > 1:
             add_par(' | '.join(items[1:]), center=True)
+    # Blank line
     doc.add_paragraph()
 
-    # --- Sections ---
-    for section in ['Professional Summary','Education','Skills','Projects','Achievements','Certifications']:
+    # Other sections
+    for section in ['Professional Summary', 'Education', 'Skills',
+                    'Projects', 'Achievements', 'Certifications']:
         entries = resume_json.get(section)
         if not entries:
             continue
         add_heading(section)
-        # Summary
+
+        # Professional Summary
         if section == 'Professional Summary':
             text = entries if isinstance(entries, str) else ' '.join(entries)
             add_par(text, indent=0.2)
@@ -1208,7 +1211,7 @@ def convert_json_to_docx(resume_json):
         # Education
         elif section == 'Education':
             if isinstance(entries, dict):
-                for k,v in entries.items():
+                for k, v in entries.items():
                     add_par(f"{k}: {v}", indent=0.2)
             elif isinstance(entries, (list, tuple)):
                 for e in entries:
@@ -1220,8 +1223,8 @@ def convert_json_to_docx(resume_json):
         elif section == 'Skills':
             if isinstance(entries, dict):
                 for cat, lst in entries.items():
-                    text = f"{cat}: {', '.join(lst)}" if isinstance(lst, (list, tuple)) else f"{cat}: {lst}"
-                    add_par(text, indent=0.2)
+                    joined = ', '.join(lst) if isinstance(lst, (list, tuple)) else str(lst)
+                    add_par(f"{cat}: {joined}", indent=0.2)
             elif isinstance(entries, (list, tuple)):
                 add_par(', '.join(entries), indent=0.2)
             else:
@@ -1232,7 +1235,8 @@ def convert_json_to_docx(resume_json):
             if isinstance(entries, list):
                 for proj in entries:
                     if isinstance(proj, dict):
-                        header = ' | '.join(filter(None,[proj.get('Title'),proj.get('Role'),proj.get('Dates')]))
+                        header = ' | '.join(filter(None,
+                                     [proj.get('Title'), proj.get('Role'), proj.get('Dates')]))
                         add_par(header, bold=True, indent=0.2)
                         desc = proj.get('Description', [])
                         if isinstance(desc, list):
@@ -1251,7 +1255,7 @@ def convert_json_to_docx(resume_json):
                 for e in entries:
                     add_par(str(e), bullet=True, indent=0.2)
             elif isinstance(entries, dict):
-                for k,v in entries.items():
+                for k, v in entries.items():
                     add_par(f"{k}: {v}", indent=0.2)
             else:
                 add_par(str(entries), indent=0.2)
