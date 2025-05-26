@@ -1191,32 +1191,76 @@ def get_skills():
 #       mimetype='application/pdf'
 #     )
 
+# @app.route('/create_resume', methods=['POST'])
+# def create_resume():
+#     data = request.get_json() or {}
+#     raw = sanitize_input(data.get('responses',''))
+#     if not raw:
+#         return jsonify({"error":"No responses provided"}), 400
+
+#     # Call Gemini to structure JSON
+#     model = genai.GenerativeModel(geminimodel)
+#     prompt = f"""
+#     The user answered these questions:
+#     {raw}
+
+#     Create JSON with these keys in order:
+#     "Contact Information","Professional Summary","Education",
+#     "Skills","Projects","Achievements","Certifications".
+#     Each value is an array of strings. Use ATS-safe, one-page structure.
+#     """
+#     response = model.generate_content(prompt)
+#     text = response.text.strip()
+#     # extract JSON
+#     import re, json
+#     m = re.search(r'```json(.*?)```', text, re.DOTALL)
+#     j = json.loads(m.group(1).strip()) if m else json.loads(text)
+
+#     # Generate DOCX
+#     docx_file = convert_json_to_docx(j)
+#     return send_file(
+#         docx_file,
+#         download_name='My_Resume.docx',
+#         as_attachment=True,
+#         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+#     )
+
 @app.route('/create_resume', methods=['POST'])
 def create_resume():
     data = request.get_json() or {}
     raw = sanitize_input(data.get('responses',''))
+    jd  = sanitize_input(data.get('job_description',''))
+
     if not raw:
         return jsonify({"error":"No responses provided"}), 400
+    if not jd:
+        return jsonify({"error":"Missing job description"}), 400
 
-    # Call Gemini to structure JSON
     model = genai.GenerativeModel(geminimodel)
     prompt = f"""
-    The user answered these questions:
-    {raw}
+You are an expert ATS-tuning AI.  Given this **Job Description**:
+{jd}
 
-    Create JSON with these keys in order:
-    "Contact Information","Professional Summary","Education",
-    "Skills","Projects","Achievements","Certifications".
-    Each value is an array of strings. Use ATS-safe, one-page structure.
-    """
+And this **raw candidate info**:
+{raw}
+
+Produce a JSON object with exactly these sections in order:
+"Contact Information","Professional Summary","Education",
+"Skills","Projects","Achievements","Certifications"
+
+• Make every bullet keyword-rich to score high on the JD's ATS scan.  
+• Use measurable outcomes where possible.
+• Use action verbs where possible.
+• Quantify the achievements and demonstrate the impact with concrete evidence.
+• Keep it to one A4 page, ATS-safe, editable.  
+"""
     response = model.generate_content(prompt)
     text = response.text.strip()
-    # extract JSON
-    import re, json
+
+    # extract JSON blob    
     m = re.search(r'```json(.*?)```', text, re.DOTALL)
     j = json.loads(m.group(1).strip()) if m else json.loads(text)
-
-    # Generate DOCX
+    
     docx_file = convert_json_to_docx(j)
     return send_file(
         docx_file,
@@ -1224,6 +1268,7 @@ def create_resume():
         as_attachment=True,
         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
+
 
 
 @app.route('/upload_resume', methods=['POST'])

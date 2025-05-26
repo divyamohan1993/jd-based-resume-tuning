@@ -919,24 +919,38 @@
 
             <!-- Description -->
             <p class="text-gray-700 mb-6 leading-relaxed text-base max-w-2xl">
-                Don’t have a resume yet? No worries. Just answer these simple questions in your own words—
-                grammar or typos don’t matter here. We’ll polish it for you ✨
+                Don’t have a resume yet? No worries. Just answer these questions in your own words—typos or imperfect
+                grammar are fine. We’ll polish everything for you!
             </p>
 
-            <!-- Questions List -->
-            <ol class="list-decimal pl-5 space-y-4 text-gray-800 text-base mb-6 max-w-2xl">
-                <li>Your full name, email, phone, LinkedIn/GitHub URL</li>
-                <li>A 2–3 sentence professional summary or objective</li>
-                <li>Education: institution, degree, years</li>
-                <li>Skills (comma-separated)</li>
-                <li>Projects or internships: title + 1–2 lines each</li>
-                <li>Achievements, certifications, or extracurriculars</li>
+            <!-- Detailed Questions List -->
+            <ol class="list-decimal pl-5 space-y-3 text-gray-800 text-base mb-6 max-w-2xl">
+                <li><strong>Contact Info:</strong> Full name, email, phone, LinkedIn/GitHub/personal site URLs</li>
+                <li><strong>Summary/Objective:</strong> 2–3 sentences about your career goals or what you bring</li>
+                <li><strong>Education:</strong> School/University, degree, field, start–end years, (GPA if strong)</li>
+                <li><strong>Technical Skills:</strong> Languages, frameworks, tools—comma-separated, with proficiency
+                    level if you like</li>
+                <li><strong>Projects & Internships:</strong>
+                    <ul class="list-disc pl-5">
+                        <li>Title, role, dates</li>
+                        <li>2–3 bullet points: your contribution, tech used, measurable impact</li>
+                    </ul>
+                </li>
+                <li><strong>Work/Volunteer/Leadership:</strong>
+                    <ul class="list-disc pl-5">
+                        <li>Organization/title/dates</li>
+                        <li>2 bullet points: responsibilities & outcomes</li>
+                    </ul>
+                </li>
+                <li><strong>Achievements & Awards:</strong> Competition name, year, result</li>
+                <li><strong>Certifications:</strong> Certification name, provider, date</li>
+                <li><strong>Languages & Interests:</strong> Spoken languages, extracurriculars, hobbies (optional)</li>
             </ol>
 
             <!-- Response Textarea -->
             <textarea id="buildResponses"
                 class="w-full h-60 p-5 border border-purple-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 text-gray-800 resize-none shadow-sm"
-                placeholder="Type your answers here…"></textarea>
+                placeholder="Please answer each question above. You can number your responses or write as paragraphs—whatever’s easiest!"></textarea>
 
             <!-- Create Button -->
             <button id="buildResumeBtn" type="button"
@@ -951,7 +965,13 @@
                 <p class="mt-3 text-purple-600 font-medium">Building your one-page resume…</p>
             </div>
 
+            <div id="resumebuildersuccessmessage" class="mt-4 text-green-600 text-center font-medium hidden">
+                Resume generated and downloaded. Refresh the page, paste the job description, and upload this resume to
+                receive suggestions. Then update your resume accordingly.
+            </div>
+
         </div>
+
 
 
 
@@ -1205,7 +1225,10 @@
             fetch('/create_resume', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ responses: raw })
+                body: JSON.stringify({
+                    responses: raw,
+                    job_description: document.getElementById('jobDescription').value.trim()
+                })
             })
                 .then(res => {
                     if (!res.ok) throw new Error(res.statusText);
@@ -1227,7 +1250,9 @@
                 })
                 .finally(() => {
                     document.getElementById('buildLoading').classList.add('hidden');
+                    document.getElementById('resumebuildersuccessmessage').classList.remove('hidden');
                     document.getElementById('buildResumeBtn').disabled = false;
+                    showSuccessToast("Resume generated and downloaded");
                 });
         });
 
@@ -2110,7 +2135,7 @@
 
             // Optionally, you can pre-activate the Upload button:
             // chooseUpload.classList.add('bg-yellow-600','text-white');
-            
+
             // document.getElementById('buildResumeSection').classList.add('hidden'); // keep builder hidden
 
             // Yes → show the normal upload/paste UI
@@ -2120,7 +2145,7 @@
             });
 
             // No → hide the resume section entirely, show builder
-            document.getElementById('hasResumeNo').addEventListener('click', () => {            
+            document.getElementById('hasResumeNo').addEventListener('click', () => {
                 document.getElementById('splitscreenjdresumecapturinglocation').classList.add('hidden');
                 document.getElementById('buildResumeSection').classList.remove('hidden');
             });
