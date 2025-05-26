@@ -1143,6 +1143,12 @@ def convert_json_to_docx(resume_json):
     Build a one‑page A4 DOCX (0.5" margins) from structured resume JSON.
     """
     doc = docx.Document()
+    
+    # Set default font to Times New Roman for the whole document
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = 'Times New Roman'
+
     sec = doc.sections[0]
     # A4 dimensions
     sec.page_height = Mm(297);
@@ -1164,16 +1170,18 @@ def convert_json_to_docx(resume_json):
     if contact_items:
         # Name (largest)
         p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         r = p.add_run(contact_items[0])
         r.font.size = Pt(16)
         r.bold = True
         # Remaining contacts in small text
         if len(contact_items) > 1:
             p = doc.add_paragraph()
+            r.font.name = 'Times New Roman'
             r = p.add_run(' | '.join(contact_items[1:]))
             r.font.size = Pt(9)
     # add a blank line
-    doc.add_paragraph()
+    # doc.add_paragraph()
 
     # --- Other Sections ---
     for title in [ "Professional Summary", "Education", "Skills", "Projects", "Achievements", "Certifications"]:
@@ -1189,22 +1197,28 @@ def convert_json_to_docx(resume_json):
         if title == "Education":
             for line in entries:
                 p = doc.add_paragraph(line)
-                p.paragraph_format.left_indent = Inches(0.2)
+                p.paragraph_format.left_indent = Inches(0.2)                
                 p.runs[0].font.size = Pt(9)
+                p.runs[0].font.name = 'Times New Roman'
         elif title == "Professional Summary":
-            for line in entries:
-                p = doc.add_paragraph(line)
+            for line in entries:        
+                p = doc.add_paragraph()
                 p.paragraph_format.left_indent = Inches(0.2)
-                p.runs[0].font.size = Pt(9)
+                r = p.add_run(line)
+                r.font.size = Pt(9)
+                r.font.name = 'Times New Roman'
         elif title == "Skills":
             for line in entries:
-                p = doc.add_paragraph(line)
+                p = doc.add_paragraph()
                 p.paragraph_format.left_indent = Inches(0.2)
-                p.runs[0].font.size = Pt(9)
+                r = p.add_run(line)
+                r.font.name = 'Times New Roman'
+                r.font.size = Pt(9)
         else:
-            for line in entries:
+            for line in entries:                
                 p = doc.add_paragraph(style='List Bullet')
                 r = p.add_run(line)
+                r.font.name = 'Times New Roman'
                 r.font.size = Pt(9)
 
     # save to bytes
