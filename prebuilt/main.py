@@ -81,7 +81,7 @@ import mammoth
 import PyPDF2
 import docx
 import itertools
-from docx.shared import Pt, Inches
+from docx.shared import Pt, Inches, Mm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.style import WD_STYLE_TYPE
 from reportlab.pdfgen import canvas
@@ -1081,6 +1081,62 @@ def json_resume_to_text(resume_json):
         parts.append("")  # blank line
     return "\n".join(parts)
 
+def convert_json_to_docx(resume_json):
+    """
+    Build a one‐page, A4, 0.5" margins DOCX from structured resume JSON.
+    """
+    document = docx.Document()
+    section = document.sections[0]
+    # A4 size
+    section.page_height = Mm(297)
+    section.page_width = Mm(210)
+    # 0.5 inch margins
+    for margin in ('top_margin','bottom_margin','left_margin','right_margin'):
+        setattr(section, margin, Inches(0.5))
+
+    # --- Contact Information: name + contacts ---
+    contact = resume_json.get("Contact Information", [])
+    if contact:
+        # Name line
+        p = document.add_paragraph()
+        run = p.add_run(contact[0])
+        run.font.size = Pt(24)
+        run.bold = True
+        # Contacts line
+        if len(contact) > 1:
+            p = document.add_paragraph()
+            run = p.add_run(' | '.join(contact[1:]))
+            run.font.size = Pt(9)
+    # space
+    document.add_paragraph()
+
+    # --- Other sections ---
+    for section_title in ["Professional Summary","Education","Skills","Projects","Achievements","Certifications"]:
+        lines = resume_json.get(section_title, [])
+        if not lines:
+            continue
+        # Heading
+        h = document.add_paragraph()
+        r = h.add_run(section_title)
+        r.font.size = Pt(14)
+        r.bold = True
+        # Entries
+        if section_title == "Education":
+            for line in lines:
+                p = document.add_paragraph(line)
+                p.paragraph_format.left_indent = Inches(0.2)
+                p.runs[0].font.size = Pt(10)
+        else:
+            for line in lines:
+                p = document.add_paragraph(style='List Bullet')
+                run = p.add_run(line)
+                run.font.size = Pt(10)
+
+    # Save
+    buf = io.BytesIO()
+    document.save(buf)
+    buf.seek(0)
+    return buf
 
 @app.route('/')
 def home():
@@ -1096,6 +1152,45 @@ def get_skills():
         "skills_by_category": skills_by_category
     })
 
+# @app.route('/create_resume', methods=['POST'])
+# def create_resume():
+#     data = request.get_json() or {}
+#     raw = sanitize_input(data.get('responses',''))
+#     if not raw:
+#         return jsonify({"error":"No responses provided"}), 400
+
+#     # Prompt Gemini to structure this into an ATS-friendly resume JSON
+#     model = genai.GenerativeModel(geminimodel)
+#     prompt = f"""
+#     The user answered these questions in free form:
+#     {raw}
+
+#     Create a JSON object with these keys (order matters):
+#     "Contact Information", "Professional Summary", "Education", "Skills",
+#     "Projects", "Achievements", "Certifications"
+
+#     Each value is an array of strings (one per line). 
+#     Use ATS-friendly, one-page resume structure.
+#     """
+#     response = model.generate_content(prompt)
+#     text = response.text.strip()
+
+#     # try to pull out JSON block
+#     import re, json
+#     m = re.search(r'```json(.*?)```', text, re.DOTALL)
+#     j = json.loads(m.group(1)) if m else json.loads(text)
+
+#     # convert to plain text and PDF
+#     pdf_text = json_resume_to_text(j)
+#     pdf = convert_to_pdf_classic(pdf_text, template_style="professional")
+
+#     return send_file(
+#       pdf,
+#       download_name='My_Resume.pdf',
+#       as_attachment=True,
+#       mimetype='application/pdf'
+#     )
+
 @app.route('/create_resume', methods=['POST'])
 def create_resume():
     data = request.get_json() or {}
@@ -1103,36 +1198,31 @@ def create_resume():
     if not raw:
         return jsonify({"error":"No responses provided"}), 400
 
-    # Prompt Gemini to structure this into an ATS-friendly resume JSON
+    # Call Gemini to structure JSON
     model = genai.GenerativeModel(geminimodel)
     prompt = f"""
-    The user answered these questions in free form:
+    The user answered these questions:
     {raw}
 
-    Create a JSON object with these keys (order matters):
-    "Contact Information", "Professional Summary", "Education", "Skills",
-    "Projects", "Achievements", "Certifications"
-
-    Each value is an array of strings (one per line). 
-    Use ATS-friendly, one-page resume structure.
+    Create JSON with these keys in order:
+    "Contact Information","Professional Summary","Education",
+    "Skills","Projects","Achievements","Certifications".
+    Each value is an array of strings. Use ATS-safe, one-page structure.
     """
     response = model.generate_content(prompt)
     text = response.text.strip()
-
-    # try to pull out JSON block
+    # extract JSON
     import re, json
     m = re.search(r'```json(.*?)```', text, re.DOTALL)
-    j = json.loads(m.group(1)) if m else json.loads(text)
+    j = json.loads(m.group(1).strip()) if m else json.loads(text)
 
-    # convert to plain text and PDF
-    pdf_text = json_resume_to_text(j)
-    pdf = convert_to_pdf_classic(pdf_text, template_style="professional")
-
+    # Generate DOCX
+    docx_file = convert_json_to_docx(j)
     return send_file(
-      pdf,
-      download_name='My_Resume.pdf',
-      as_attachment=True,
-      mimetype='application/pdf'
+        docx_file,
+        download_name='My_Resume.docx',
+        as_attachment=True,
+        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
 
 
