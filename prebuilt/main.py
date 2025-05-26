@@ -1081,62 +1081,63 @@ def json_resume_to_text(resume_json):
         parts.append("")  # blank line
     return "\n".join(parts)
 
-def convert_json_to_docx(resume_json):
-    """
-    Build a one‐page, A4, 0.5" margins DOCX from structured resume JSON.
-    """
-    document = docx.Document()
-    section = document.sections[0]
-    # A4 size
-    section.page_height = Mm(297)
-    section.page_width = Mm(210)
-    # 0.5 inch margins
-    for margin in ('top_margin','bottom_margin','left_margin','right_margin'):
-        setattr(section, margin, Inches(0.5))
+# def convert_json_to_docx(resume_json):
+#     """
+#     Build a one‐page, A4, 0.5" margins DOCX from structured resume JSON.
+#     """
+#     document = docx.Document()
+#     section = document.sections[0]
+#     # A4 size
+#     section.page_height = Mm(297)
+#     section.page_width = Mm(210)
+#     # 0.5 inch margins
+#     for margin in ('top_margin','bottom_margin','left_margin','right_margin'):
+#         setattr(section, margin, Inches(0.5))
 
-    # --- Contact Information: name + contacts ---
-    contact = resume_json.get("Contact Information", [])
-    if contact:
-        # Name line
-        p = document.add_paragraph()
-        run = p.add_run(contact[0])
-        run.font.size = Pt(24)
-        run.bold = True
-        # Contacts line
-        if len(contact) > 1:
-            p = document.add_paragraph()
-            run = p.add_run(' | '.join(contact[1:]))
-            run.font.size = Pt(9)
-    # space
-    document.add_paragraph()
+#     # --- Contact Information: name + contacts ---
+#     contact = resume_json.get("Contact Information", [])
+#     if contact:
+#         # Name line
+#         p = document.add_paragraph()
+#         run = p.add_run(contact[0])
+#         run.font.size = Pt(24)
+#         run.bold = True
+#         # Contacts line
+#         if len(contact) > 1:
+#             p = document.add_paragraph()
+#             run = p.add_run(' | '.join(contact[1:]))
+#             run.font.size = Pt(9)
+#     # space
+#     document.add_paragraph()
 
-    # --- Other sections ---
-    for section_title in ["Professional Summary","Education","Skills","Projects","Achievements","Certifications"]:
-        lines = resume_json.get(section_title, [])
-        if not lines:
-            continue
-        # Heading
-        h = document.add_paragraph()
-        r = h.add_run(section_title)
-        r.font.size = Pt(14)
-        r.bold = True
-        # Entries
-        if section_title == "Education":
-            for line in lines:
-                p = document.add_paragraph(line)
-                p.paragraph_format.left_indent = Inches(0.2)
-                p.runs[0].font.size = Pt(10)
-        else:
-            for line in lines:
-                p = document.add_paragraph(style='List Bullet')
-                run = p.add_run(line)
-                run.font.size = Pt(10)
+#     # --- Other sections ---
+#     for section_title in ["Professional Summary","Education","Skills","Projects","Achievements","Certifications"]:
+#         lines = resume_json.get(section_title, [])
+#         if not lines:
+#             continue
+#         # Heading
+#         h = document.add_paragraph()
+#         r = h.add_run(section_title)
+#         r.font.size = Pt(14)
+#         r.bold = True
+#         # Entries
+#         if section_title == "Education":
+#             for line in lines:
+#                 p = document.add_paragraph(line)
+#                 p.paragraph_format.left_indent = Inches(0.2)
+#                 p.runs[0].font.size = Pt(10)
+#         else:
+#             for line in lines:
+#                 p = document.add_paragraph(style='List Bullet')
+#                 run = p.add_run(line)
+#                 run.font.size = Pt(10)
 
-    # Save
-    buf = io.BytesIO()
-    document.save(buf)
-    buf.seek(0)
-    return buf
+#     # Save
+#     buf = io.BytesIO()
+#     document.save(buf)
+#     buf.seek(0)
+#     return buf
+
 
 def convert_json_to_docx(resume_json):
     """
@@ -1182,6 +1183,7 @@ def convert_json_to_docx(resume_json):
             r.font.size = Pt(9)
     # add a blank line
     # doc.add_paragraph()
+    
 
     # --- Other Sections ---
     for title in [ "Professional Summary", "Education", "Skills", "Projects", "Achievements", "Certifications"]:
@@ -1192,34 +1194,42 @@ def convert_json_to_docx(resume_json):
         h = doc.add_paragraph()
         rh = h.add_run(title)
         rh.font.size = Pt(12)
-        rh.bold = True
-        # Content
-        if title == "Education":
+        rh.bold = True        
+        # Content formatting by section
+        if title == "Professional Summary":
+            # Merge all summary lines into one paragraph
+            text = entries if isinstance(entries, str) else ' '.join(entries)
+            p = doc.add_paragraph()
+            p.paragraph_format.left_indent = Inches(0.2)
+            r = p.add_run(text)
+            r.font.name = 'Times New Roman'
+            r.font.size = Pt(9)
+
+        elif title == "Education":
+            # One entry per line, no bullets
             for line in entries:
-                p = doc.add_paragraph(line)
-                p.paragraph_format.left_indent = Inches(0.2)                
-                p.runs[0].font.size = Pt(9)
-                p.runs[0].font.name = 'Times New Roman'
-        elif title == "Professional Summary":
-            for line in entries:        
                 p = doc.add_paragraph()
                 p.paragraph_format.left_indent = Inches(0.2)
-                r = p.add_run(line)
-                r.font.size = Pt(9)
-                r.font.name = 'Times New Roman'
+                run = p.add_run(line)
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(9)
+
         elif title == "Skills":
-            for line in entries:
-                p = doc.add_paragraph()
-                p.paragraph_format.left_indent = Inches(0.2)
-                r = p.add_run(line)
-                r.font.name = 'Times New Roman'
-                r.font.size = Pt(9)
+            # comma-separated skills in one line
+            text = ', '.join(entries)
+            p = doc.add_paragraph()
+            p.paragraph_format.left_indent = Inches(0.2)
+            run = p.add_run(text)
+            run.font.name = 'Times New Roman'
+            run.font.size = Pt(9)
+
         else:
-            for line in entries:                
+            # other list-based sections (Projects, Achievements, Certifications)
+            for line in entries:
                 p = doc.add_paragraph(style='List Bullet')
-                r = p.add_run(line)
-                r.font.name = 'Times New Roman'
-                r.font.size = Pt(9)
+                run = p.add_run(line)
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(9)
 
     # save to bytes
     buf = io.BytesIO()
@@ -1328,15 +1338,15 @@ def create_resume():
 
     model = genai.GenerativeModel(geminimodel)
     prompt = f"""
-You are an expert ATS-tuning AI.  Given this **Job Description**:
+You are an expert ATS-tuning AI. Given this **Job Description**:
 {jd}
 
 And this **raw candidate info**:
 {raw}
 
-Produce a JSON object with exactly these sections in order:
-"Contact Information","Professional Summary","Education",
-"Skills","Projects","Achievements","Certifications"
+Create a JSON object with exactly these keys in order:
+"Contact Information","Professional Summary","Education","Skills","Projects","Achievements","Certifications"
+
 
 • Make every bullet keyword-rich to score high on the JD's ATS scan.  
 • Use measurable outcomes where possible.
@@ -1351,6 +1361,8 @@ Produce a JSON object with exactly these sections in order:
     m = re.search(r'```json(.*?)```', text, re.DOTALL)
     j = json.loads(m.group(1).strip()) if m else json.loads(text)
     
+    print(j) # debug
+
     docx_file = convert_json_to_docx(j)
     return send_file(
         docx_file,
