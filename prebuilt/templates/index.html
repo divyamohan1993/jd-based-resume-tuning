@@ -562,7 +562,7 @@
                 <!-- Hero Feedback -->
                 <div id="feedbackHero" class="mb-12 text-center font-[Lora] hidden">
                     <h2 id="heroEmotion" class="text-4xl md:text-4xl font-bold text-yellow-600 my-10"
-                       style="font-family:'Playfair Display', serif;"></h2>
+                        style="font-family:'Playfair Display', serif;"></h2>
                     <p id="heroHeadline" class="text-justify text-xl md:text-xl text-gray-800 my-10"></p>
                 </div>
 
@@ -579,9 +579,9 @@
                             </div>
                         </div>
                         <p class="text-center text-gray-700 text-sm">
-                            <span class="font-semibold text-yellow-700">ATS Compatibility</span><br>
-                            An estimate of how well your resume passes automated filters (formatting, keywords,
-                            structure).
+                            <span class="font-semibold text-yellow-700">Tailored ATS Compatibility</span><br>
+                            An estimate of how well your resume passes automated filters (based on keyword coverage,
+                            synonyms, placement, and section weight).
                         </p>
                     </div>
 
@@ -662,6 +662,13 @@
                             These gauges represent the core criteria a hiring manager evaluates—clarity, conciseness,
                             and evidence of impact—once your resume has passed the ATS stage.
                         </span>
+                    </div>
+
+                    <div
+                        class="text-sm text-gray-700 flex items-start bg-blue-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">
+                        <i class="fas fa-info-circle mt-0.5 mr-2 text-yellow-500"></i>
+                        Analysis Confidence Score (how confident is the AI while making these analysis): <span
+                            id="analysisconfidencescore"></span>
                     </div>
 
                     <!-- Gauges Grid -->
@@ -771,7 +778,7 @@
         </div>
 
         <!-- Generate Section - Bottom Row -->
-        <div class="bg-white rounded-xl p-6 card disabled">
+        <div class="bg-white rounded-xl p-6 card disabled hidden">
             <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
                 <i class="fas fa-file-alt mr-2 text-purple-600"></i>Generate Fixed Resume - <span
                     class="text-red-600 font-bold">Section Under Construction</span>
@@ -856,6 +863,37 @@
                 <p class="mt-2 text-purple-600">Generating tailored resume...</p>
             </div>
         </div>
+
+        <!-- ===== Build From Scratch Section ===== -->
+        <div id="buildResumeSection" class="bg-white rounded-xl p-6 card mt-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-800">
+                <i class="fas fa-pencil-alt mr-2 text-purple-600"></i> Build Your First Resume
+            </h2>
+            <p class="text-gray-600 mb-4 text-sm">
+                Don’t have a resume yet? Answer these questions in your own words—grammar or typos won’t matter.
+            </p>
+            <ol class="list-decimal pl-5 space-y-3 text-gray-700 mb-4">
+                <li>Your full name, email, phone, LinkedIn/GitHub URL</li>
+                <li>A 2–3 sentence professional summary or objective</li>
+                <li>Education: institution, degree, years</li>
+                <li>Skills (comma-separated)</li>
+                <li>Projects or internships: title + 1–2 lines each</li>
+                <li>Achievements, certifications, or extracurriculars</li>
+            </ol>
+            <textarea id="buildResponses"
+                class="w-full h-56 p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                placeholder="Type your answers here…"></textarea>
+            <button id="buildResumeBtn" type="button"
+                class="mt-4 bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition">
+                Create Resume
+            </button>
+            <div id="buildLoading" class="mt-4 text-center hidden">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-600">
+                </div>
+                <p class="mt-2 text-purple-600">Building your one-page resume…</p>
+            </div>
+        </div>
+
 
         <!-- Resume Best Practices -->
         <section class="mt-16 bg-white p-10 rounded-2xl shadow-xl border-l-4 border-yellow-400 font-[Lora]">
@@ -1091,6 +1129,47 @@
                     });
             }, 500);
         });
+
+        document.getElementById('buildResumeBtn').addEventListener('click', () => {
+            const raw = document.getElementById('buildResponses').value.trim();
+            if (!raw) {
+                showDangerToast('Please answer the questions above before proceeding.');
+                return;
+            }
+
+            // Show spinner
+            document.getElementById('buildLoading').classList.remove('hidden');
+            document.getElementById('buildResumeBtn').disabled = true;
+
+            fetch('/create_resume', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ responses: raw })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error(res.statusText);
+                    return res.blob();
+                })
+                .then(blob => {
+                    // auto-download the PDF
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'My_Resume.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                })
+                .catch(err => {
+                    console.error(err);
+                    showDangerToast('Failed to build resume. Try again.');
+                })
+                .finally(() => {
+                    document.getElementById('buildLoading').classList.add('hidden');
+                    document.getElementById('buildResumeBtn').disabled = false;
+                });
+        });
+
 
         // Upload Resume
         document.getElementById('resumeUpload').addEventListener('change', function (event) {
@@ -1436,7 +1515,7 @@
             // after createSkillMatchChart(...)
             const detail = data.detailed_analysis || data;
             const raw = {
-                confidence_score: detail.confidence_score,
+                // confidence_score: detail.confidence_score,
                 assertiveness_level: detail.assertiveness_level,
                 clarity: detail.clarity,
                 emotional_intelligence: detail.emotional_intelligence,
@@ -1452,6 +1531,7 @@
                 metric_usage: detail.metric_usage,
                 behavioral_score: detail.behavioral_score
             };
+            document.getElementById('analysisconfidencescore').innerText = detail.confidence_score;
             renderAllMetrics(raw);
 
         }

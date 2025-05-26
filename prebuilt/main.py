@@ -952,7 +952,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
       15. clarity (integer): 0-100 based on level of clarity in descriptions.
       16. emotional_intelligence (integer): 0-100 based on presence of emotional intelligence cues.        
       17. customization_level (integer): 0-100 based on degree of tailoring to the job.  
-      18. quantification_strength (integer): 0-100 based on strength of numeric data usage (Strong/Med/Weak).  
+      18. quantification_strength (integer): 0-100 based on strength of numeric data usage.  
       19. readability_score (integer): 0-100 based on readability of the resume.  
       20. grammar_accuracy (integer): 0-100 based on grammar accuracy status.  
       21. structure_coherence (integer): 0-100 based on structural coherence status.  
@@ -1064,6 +1064,24 @@ def tailor_resume(resume_text, job_description):
     response = model.generate_content(prompt)
     return response.text.strip()
 
+def json_resume_to_text(resume_json):
+    """
+    Given resume_json like:
+    { "Contact Information": [...],
+      "Professional Summary": [...],
+      "Education": [...],
+      ... }
+    produce a single string with each section title + bullets.
+    """
+    parts = []
+    for section, lines in resume_json.items():
+        parts.append(section.upper())
+        for line in lines:
+            parts.append(f"- {line}")
+        parts.append("")  # blank line
+    return "\n".join(parts)
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -1077,6 +1095,46 @@ def get_skills():
         "skills": all_skills,
         "skills_by_category": skills_by_category
     })
+
+@app.route('/create_resume', methods=['POST'])
+def create_resume():
+    data = request.get_json() or {}
+    raw = sanitize_input(data.get('responses',''))
+    if not raw:
+        return jsonify({"error":"No responses provided"}), 400
+
+    # Prompt Gemini to structure this into an ATS-friendly resume JSON
+    model = genai.GenerativeModel(geminimodel)
+    prompt = f"""
+    The user answered these questions in free form:
+    {raw}
+
+    Create a JSON object with these keys (order matters):
+    "Contact Information", "Professional Summary", "Education", "Skills",
+    "Projects", "Achievements", "Certifications"
+
+    Each value is an array of strings (one per line). 
+    Use ATS-friendly, one-page resume structure.
+    """
+    response = model.generate_content(prompt)
+    text = response.text.strip()
+
+    # try to pull out JSON block
+    import re, json
+    m = re.search(r'```json(.*?)```', text, re.DOTALL)
+    j = json.loads(m.group(1)) if m else json.loads(text)
+
+    # convert to plain text and PDF
+    pdf_text = json_resume_to_text(j)
+    pdf = convert_to_pdf_classic(pdf_text, template_style="professional")
+
+    return send_file(
+      pdf,
+      download_name='My_Resume.pdf',
+      as_attachment=True,
+      mimetype='application/pdf'
+    )
+
 
 @app.route('/upload_resume', methods=['POST'])
 def upload_resume():
