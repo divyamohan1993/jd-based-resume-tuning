@@ -953,16 +953,21 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
       15. clarity (integer): 0-100 based on level of clarity in descriptions.
       16. emotional_intelligence (integer): 0-100 based on presence of emotional intelligence cues.        
       17. customization_level (integer): 0-100 based on degree of tailoring to the job.  
-      18. quantification_strength (integer): 0-100 based on strength of numeric data usage.  
-      19. readability_score (integer): 0-100 based on readability of the resume.  
-      20. grammar_accuracy (integer): 0-100 based on grammar accuracy status.  
-      21. structure_coherence (integer): 0-100 based on structural coherence status.  
-      22. conciseness (integer): 0-100 based on conciseness evaluation.  
-      23. achievement_focus (integer): 0-100 based on focus on achievements.  
-      24. leadership_emphasis (integer): 0-100 based on emphasis on leadership.  
-      25. teamwork_emphasis (integer): 0-100 based on emphasis on teamwork.  
-      26. metric_usage (integer): 0-100 based on frequency of metric usage.
-      27. behavioral_score (integer): 0-100 based on ratings for key matching traits and behaviour analysis from the user resume.
+      18. quantification_strength (integer): 0-100 based on strength of numeric data usage.        
+      19. achievement_focus (integer): 0-100 based on focus on achievements.  
+      20. leadership_emphasis (integer): 0-100 based on emphasis on leadership.  
+      21. teamwork_emphasis (integer): 0-100 based on emphasis on teamwork.  
+      22. behavioral_score (integer): 0-100 based on ratings for key matching traits and behaviour analysis from the user resume.
+      23. learning_speed (integer): 0-100 based on diversity of recent up-skilling activities and evidence of rapid self-learning.
+      24. skill_diversity (integer): 0-100 based on count of distinct skill categories present.
+      25. project_complexity (integer): 0-100 based on technical depth, number of technologies used, and project scope.
+      26. certification_relevance (integer): 0-100 based on quantity and pertinence of certifications to the target role.
+      27. education_alignment (integer): 0-100 based on how closely academic background matches job requirements.
+      28. continuous_learning (integer): 0-100 capturing MOOCs, workshops, and conferences attended in the last 2 years.
+      29. adaptability (integer): 0-100 reflecting range of roles, industries, or technologies the candidate has navigated.
+      30. innovation (integer): 0-100 based on patents, publications, hackathon awards, or unique solutions detailed.
+      31. problem_solving (integer): 0-100 quantifying evidence of tackling complex challenges in experience/projects.
+      32. resilience (integer): 0-100 gauging instances of overcoming setbacks, pivots, or career gaps with persistence.
     
     Inputs (do not hallucinate—use only what’s provided):
       RESUME_TEXT:

@@ -675,18 +675,16 @@
                             These gauges represent the core criteria a hiring manager evaluates—clarity, conciseness,
                             and evidence of impact—once your resume has passed the ATS stage.
                         </span>
-                    </div>
-
-                    <div
-                        class="text-sm text-gray-700 flex items-start bg-blue-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">
-                        <i class="fas fa-info-circle mt-0.5 mr-2 text-yellow-500"></i>
-                        Analysis Confidence Score (how confident is the AI while making these analysis): <span
-                            id="analysisconfidencescore"></span>
-                    </div>
+                    </div>                    
 
                     <!-- Gauges Grid -->
                     <div id="metricsGauges" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8 gap-4">
                         <!-- Gauges are dynamically injected here -->
+                    </div>
+
+                    <div
+                        class="text-sm text-gray-700 flex items-start bg-blue-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">
+                        <i class="fas fa-hexagon-nodes mt-0.5 mr-2 text-yellow-500"></i>Confidence Score (AI’s certainty in its analysis): <span id="analysisconfidencescore" class="text-red-600 font-semibold"></span>%
                     </div>
                 </div>
 
@@ -1602,20 +1600,25 @@
             const detail = data.detailed_analysis || data;
             const raw = {
                 // confidence_score: detail.confidence_score,
+                learning_speed: detail.learning_speed,
+                skill_diversity: detail.skill_diversity,
+                project_complexity: detail.project_complexity,
+                certification_relevance: detail.certification_relevance,
                 assertiveness_level: detail.assertiveness_level,
-                clarity: detail.clarity,
                 emotional_intelligence: detail.emotional_intelligence,
-                customization_level: detail.customization_level,
+                clarity: detail.clarity,
                 quantification_strength: detail.quantification_strength,
-                readability_score: detail.readability_score,
-                grammar_accuracy: detail.grammar_accuracy,
-                structure_coherence: detail.structure_coherence,
-                conciseness: detail.conciseness,
+                customization_level: detail.customization_level,
                 achievement_focus: detail.achievement_focus,
                 leadership_emphasis: detail.leadership_emphasis,
                 teamwork_emphasis: detail.teamwork_emphasis,
-                metric_usage: detail.metric_usage,
-                behavioral_score: detail.behavioral_score
+                behavioral_score: detail.behavioral_score,
+                education_alignment: detail.education_alignment,
+                continuous_learning: detail.continuous_learning,
+                adaptability: detail.adaptability,
+                innovation: detail.innovation,
+                problem_solving: detail.problem_solving,
+                resilience: detail.resilience,
             };
             document.getElementById('analysisconfidencescore').innerText = detail.confidence_score;
             renderAllMetrics(raw);
