@@ -8,7 +8,7 @@
 #  Created     : May 26, 2025  
 #  Version     : 1.0.0  
 #  
-#  © 2025 Divya Mohan. ALL RIGHTS RESERVED.  
+#  © 2025 Divya Mohan, dmj.one. ALL RIGHTS RESERVED.  
 #  
 #  NOTICE TO RECIPIENT:  
 #  --------------------  
