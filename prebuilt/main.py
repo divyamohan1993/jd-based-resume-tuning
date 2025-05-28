@@ -940,12 +940,13 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
     You are an expert JD‐Based Resume Tuner AI. Analyze the candidate’s resume against the target job’s required skills and output one flat JSON object with these keys in exactly this order:
     
       1. overall_assessment (string): 1–2 sentences on fit & gaps.        
-      2. ats_score (integer): 0–100 based on keyword coverage, synonym & skills-taxonomy matching, job-title alignment, years-of-experience fit, education & certification relevance, formatting & section structure compatibility, location proximity, and overall semantic relevance.
+      2. ats_score (integer): 0–100 very strict scoring based on keyword coverage, synonym & skills-taxonomy matching, job-title alignment, years-of-experience fit, education & certification relevance, formatting & section structure compatibility, location proximity, and overall semantic relevance.
       3. keyword_density (object): {{"matched": int, "missing": int, "total_required": int}}.
       4. quick_fixes (array[string]): Top 3 bullet edits deliverable in < 5 minutes.  
       5. priority_skills (array[string]): Top 5 REQUIRED_SKILLS to highlight immediately.  
       6. missing_skills (array[string]): REQUIRED_SKILLS not mentioned at all.  
       7. recommendations (array[string]): Up to 5 medium-term resume rewrites—each flagged High/Med/Low impact.  
+      8. questions_to_fix_resume (array[string]): Up to 5 questions based on recommendations that can help fix the resume in accordance to the JD.
       8. sections_to_improve (array[string]): Exact sections to re-order or rewrite (e.g., "Summary," "Projects") including details of what is missing.  
       9. formatting_tips (array[string]): Filetype, layout, font-size, and ATS-friendly design suggestions.     
       10. action_verbs (array[string]): Identify and guide users on which lines to change to start with strong, dynamic verbs. 
@@ -1036,26 +1037,25 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
     # Emotion-based response (for backward compatibility)
     # Emotion-based response (for backward compatibility)
     # in your Python emotion logic
-    if match_percentage < 10:
+    if match_percentage < 20:
         emotion = "Critical Gaps"
-    elif match_percentage < 20:
-        emotion = "Major Gaps"
-    elif match_percentage < 30:
-        emotion = "Substantial Gaps"
     elif match_percentage < 40:
-        emotion = "Moderate Gaps"
-    elif match_percentage < 50:
-        emotion = "Minor Gaps"
+        emotion = "Needs Improvement"
     elif match_percentage < 60:
-        emotion = "Fair Match"
-    elif match_percentage < 70:
-        emotion = "Good Match"
-    elif match_percentage < 80:
-        emotion = "Strong Match"
-    elif match_percentage < 90:
-        emotion = "Excellent Match"
+        emotion = "Good potential"
+    elif match_percentage <= 80:
+        emotion = "Solid Match"
     else:
-        emotion = "Outstanding Fit"
+        emotion = "Excellent Match"
+        
+
+        # Emotion-based response (for backward compatibility)
+    if match_percentage < 40:
+        emotion = "😢 Needs improvement"
+    elif match_percentage < 70:
+        emotion = "😊 Good potential"
+    else:
+        emotion = "🎉 Excellent match!"    
 
      
     return {
@@ -1379,11 +1379,19 @@ def create_resume():
     data = request.get_json() or {}
     raw = sanitize_input(data.get('responses',''))
     jd  = sanitize_input(data.get('job_description',''))
+    # Free-form answers to the builder questions
+    raw = sanitize_input(data.get('responses',''))
+    # (New) answers to the gap-filling prompts, as JSON string
+    gap_answers = sanitize_input(data.get('gap_answers',''))
 
     if not raw:
         return jsonify({"error":"No responses provided"}), 400
     if not jd:
         return jsonify({"error":"Missing job description"}), 400
+
+    #If the user answered any gap questions, tack them onto the builder block
+    if gap_answers:
+        raw = raw + "\n\nGap-Filling Answers:\n" + gap_answers
 
     model = genai.GenerativeModel(geminimodel)
     prompt = f"""

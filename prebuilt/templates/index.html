@@ -631,7 +631,7 @@
                 <div id="bothchartsinside"
                     class="hidden grid grid-cols-1 md:grid-cols-2 justify-items-center gap-8 mb-16 font-[Lora]">
 
-                    
+
                     <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
                         <div class="relative w-full max-w-xs">
@@ -642,11 +642,14 @@
                         </div>
                         <p class="text-center text-gray-700 text-sm">
                             <span class="font-semibold text-yellow-700">Tailored ATS Compatibility</span><br>
-                            An estimate of how well your resume passes automated filters (based on keyword coverage, synonym & skills-taxonomy matching, job-title alignment, years-of-experience fit, education & certification relevance, formatting & section structure compatibility, location proximity, and overall semantic relevance).
+                            An estimate of how well your resume passes automated filters (based on keyword coverage,
+                            synonym & skills-taxonomy matching, job-title alignment, years-of-experience fit, education
+                            & certification relevance, formatting & section structure compatibility, location proximity,
+                            and overall semantic relevance).
                         </p>
                     </div>
 
-                    
+
                     <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
                         <div id="skillChartContainer" class="relative w-full max-w-xs">
@@ -831,6 +834,21 @@
             <p class="text-gray-600 mb-4 text-sm">
                 Generate a professionally tailored resume optimized for this specific job.
             </p>
+
+            <!-- ✏️ NEW: Gap-Filling Questions UI -->
+            <div id="gapQuestionsContainer" class="hidden mb-6 bg-yellow-50 p-4 rounded">
+                <h3 class="font-semibold mb-2 text-yellow-800">Quick Gap-Filling Questions</h3>
+                <div id="gapQuestionsList" class="space-y-4">
+                    <!-- JS will inject one block per question: -->
+                    <!--
+    <div>
+      <label class="block font-medium">1. Why do you want this role?</label>
+      <textarea data-gap-index="0" class="w-full mt-1 p-2 border rounded"></textarea>
+    </div>
+    -->
+                </div>
+            </div>
+
 
             <!-- Template Selector -->
             <div class="mb-5">
@@ -1565,6 +1583,7 @@
             const jobDescription = document.getElementById('jobDescription').value.trim();
             const outputFormat = document.getElementById('outputFormat').value;
             const templateStyle = document.getElementById('templateStyle').value;
+            
 
             if (!resumeText) {
                 alert('Please upload or paste your resume');
@@ -1654,21 +1673,16 @@
         // map percentage → emotion text + corresponding tailwind classes
 
         function getEmotionMeta(match) {
-            if (match < 10) return { text: "Critical Gaps", textClass: "text-red-600", barClass: "bg-red-600" };
-            if (match < 20) return { text: "Major Gaps", textClass: "text-orange-600", barClass: "bg-orange-600" };
-            if (match < 30) return { text: "Substantial Gaps", textClass: "text-amber-600", barClass: "bg-amber-600" };
-            if (match < 40) return { text: "Moderate Gaps", textClass: "text-yellow-600", barClass: "bg-yellow-600" };
-            if (match < 50) return { text: "Minor Gaps", textClass: "text-lime-600", barClass: "bg-lime-600" };
-            if (match < 60) return { text: "Fair Match", textClass: "text-green-600", barClass: "bg-green-600" };
-            if (match < 70) return { text: "Good Match", textClass: "text-emerald-600", barClass: "bg-emerald-600" };
-            if (match < 80) return { text: "Strong Match", textClass: "text-success-600", barClass: "bg-teal-600" };
-            if (match < 90) return { text: "Excellent Match", textClass: "text-sky-600", barClass: "bg-sky-600" };
-            return { text: "Outstanding Fit", textClass: "text-blue-600", barClass: "bg-blue-600" };
+            if (match < 20) return { text: "Critical Gaps", textClass: "text-red-600", barClass: "bg-red-600" };
+            if (match < 40) return { text: "Needs Improvement", textClass: "text-yellow-600", barClass: "bg-yellow-600" };
+            if (match < 60) return { text: "Good Potential", textClass: "text-lime-600", barClass: "bg-lime-600" };
+            if (match < 80) return { text: "Strong Match", textClass: "text-blue-600", barClass: "bg-blue-600" }; // Optional intermediate label
+            return { text: "Excellent Match", textClass: "text-green-600", barClass: "bg-green-600" };
         }
 
         function displayAnalysis(data) {
 
-            const mp = Math.round(data.match_percentage);
+            const mp = Math.round(data.detailed_analysis.ats_score);
             const meta = getEmotionMeta(mp);
 
             // ─── HERO FEEDBACK ────────────────────────────────────────────────
@@ -1681,10 +1695,8 @@
             const heroHeadline = document.getElementById('heroHeadline');
             heroHeadline.textContent = data.detailed_analysis.overall_assessment;
 
-
             // Now show the hero and hide the old emotion if you like:
             document.getElementById('feedbackHero').classList.remove('hidden');
-
 
             // Update skill lists
             const matchedList = document.getElementById('matchedSkillsList');
@@ -1867,6 +1879,28 @@
 
             createAtsScoreChart(aorig.ats_score);
         }
+
+        // ✏️ After displayDetailedAnalysis(data):
+        const gaps = data.detailed_analysis.questions_to_fix_resume || [];
+        let container = document.getElementById('gapQuestionsContainer');
+        let list = document.getElementById('gapQuestionsList');
+        list.innerHTML = '';
+        if (gaps.length) {
+            gaps.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+      <label class="block font-medium mb-1">${i + 1}. ${q}</label>
+      <textarea data-gap-index="${i}"
+                class="w-full p-2 border rounded"
+                placeholder="Your answer…"></textarea>
+    `;
+                list.appendChild(div);
+            });
+            container.classList.remove('hidden');
+        } else {
+            container.classList.add('hidden');
+        }
+
 
         function createSkillMatchChart(matched, unmatched) {
             const ctx = document.getElementById('skillChart').getContext('2d');
