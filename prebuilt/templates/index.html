@@ -1670,7 +1670,7 @@
 
             // Create or update charts
             createSkillMatchChart(data.matched_skills.length, data.unmatched_skills.length);
-            createOverallMatchChart(Math.round(data.match_percentage));
+            // createOverallMatchChart(Math.round(data.match_percentage));
 
             // after createSkillMatchChart(...)
             const detail = data.detailed_analysis || data;
@@ -1987,7 +1987,7 @@
             });
 
             // update the overlay text
-            // document.getElementById('overallMatchText').textContent = `${score}%`;
+            document.getElementById('overallMatchText').textContent = `${score}%`;
         }
 
 
