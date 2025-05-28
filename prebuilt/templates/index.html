@@ -1459,9 +1459,14 @@
                         displayDetailedAnalysis(data.detailed_analysis);
                     }
                     
-                    if (data.ats_score) {
-                        document.getElementById('detailedAnalysisContainer').classList.remove('hidden');
-                        displayDetailedAnalysis(data.ats_score);
+                    // if (data.ats_score) {
+                    //     document.getElementById('detailedAnalysisContainer').classList.remove('hidden');
+                    //     displayDetailedAnalysis(data.ats_score);
+                    // }
+
+                    // render the ATS score via its own chart helper, not displayDetailedAnalysis()
+                    if (typeof data.ats_scoretfidf === 'number') {
+                        createAtsScoreChart(data.ats_scoretfidf);
                     }
 
                     if (data.requirement_analysis) {

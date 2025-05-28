@@ -1017,7 +1017,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
         # scale to 0–100 and round
         return int(round(sim * 100))
 
-    ats_score = compute_ats_score(job_description, resume_text)
+    ats_scoretfidf = compute_ats_score(job_description, resume_text)
 
     def _strip_md(txt: str) -> str:        
         return re.sub(r'(\*\*|`+|__?|~~)', '', txt)
@@ -1065,7 +1065,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
         "emotion": emotion,
         "category_analysis": category_analysis,
         "detailed_analysis": detailed_analysis,
-        "ats_score": ats_score       
+        "ats_scoretfidf": ats_scoretfidf       
     }
 
 def tailor_resume(resume_text, job_description):
