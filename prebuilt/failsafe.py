@@ -96,9 +96,6 @@ import html
 import os
 from dotenv import load_dotenv
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
 # Load variables from .env into os.environ
 load_dotenv()
 
@@ -1008,17 +1005,6 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
             "ats_score": ["NO ANALYSIS AVAILABLE - Failsafe Exception"]
         }
         
-    # ── Compute a pure “ATS score” via TF-IDF cosine similarity ─────────────────
-    def compute_ats_score(jd: str, resume: str) -> int:
-        # vectorize both texts, remove English stopwords
-        vec = TfidfVectorizer(stop_words='english')
-        tfidf_matrix = vec.fit_transform([jd, resume])
-        sim = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
-        # scale to 0–100 and round
-        return int(round(sim * 100))
-
-    ats_score = compute_ats_score(job_description, resume_text)
-
     def _strip_md(txt: str) -> str:        
         return re.sub(r'(\*\*|`+|__?|~~)', '', txt)
 
@@ -1064,8 +1050,7 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
         "match_percentage": match_percentage,
         "emotion": emotion,
         "category_analysis": category_analysis,
-        "detailed_analysis": detailed_analysis,
-        "ats_score": ats_score       
+        "detailed_analysis": detailed_analysis       
     }
 
 def tailor_resume(resume_text, job_description):

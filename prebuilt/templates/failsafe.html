@@ -1459,11 +1459,6 @@
                         document.getElementById('detailedAnalysisContainer').classList.remove('hidden');
                         displayDetailedAnalysis(data.detailed_analysis);
                     }
-                    
-                    if (data.ats_score) {
-                        document.getElementById('detailedAnalysisContainer').classList.remove('hidden');
-                        displayDetailedAnalysis(data.ats_score);
-                    }
 
                     if (data.requirement_analysis) {
                         document.getElementById('requirementAnalysisContainer').classList.remove('hidden');
@@ -1787,8 +1782,6 @@
             const recommendationsList = document.getElementById('recommendationsList');
             recommendationsList.innerHTML = '';
 
-            aorig = analysis;
-
             analysis.recommendations.forEach(rec => {
                 const li = document.createElement('li');
                 // li.textContent = stringifyAny(rec);
@@ -1829,7 +1822,7 @@
                 sectionsToImproveList.appendChild(li);
             });
 
-            createAtsScoreChart(aorig.ats_score);
+            createAtsScoreChart(analysis.ats_score);
         }
 
         function createSkillMatchChart(matched, unmatched) {
