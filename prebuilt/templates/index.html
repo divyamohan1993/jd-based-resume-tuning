@@ -1465,8 +1465,8 @@
                     // }
 
                     // render the ATS score via its own chart helper, not displayDetailedAnalysis()
-                    if (typeof data.ats_scoretfidf === 'number') {
-                        createAtsScoreChart(data.ats_scoretfidf);
+                    if (typeof data.detailed_analysis.ats_score === 'number') {
+                        createAtsScoreChart(data.detailed_analysis.ats_score);
                     }
 
                     if (data.requirement_analysis) {
