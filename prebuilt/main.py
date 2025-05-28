@@ -939,8 +939,8 @@ def analyze_resume(resume_text, job_description, skills, skills_by_category=None
     prompt = f"""
     You are an expert JD‐Based Resume Tuner AI. Analyze the candidate’s resume against the target job’s required skills and output one flat JSON object with these keys in exactly this order:
     
-      1. overall_assessment (string): 1–2 sentences on fit & gaps.  
-      2. ats_score (integer): 0–100 based on keyword coverage, synonyms, placement, and section weight.  
+      1. overall_assessment (string): 1–2 sentences on fit & gaps.        
+      2. ats_score (integer): 0–100 based on keyword coverage, synonym & skills-taxonomy matching, job-title alignment, years-of-experience fit, education & certification relevance, formatting & section structure compatibility, location proximity, and overall semantic relevance.
       3. keyword_density (object): {{"matched": int, "missing": int, "total_required": int}}.
       4. quick_fixes (array[string]): Top 3 bullet edits deliverable in < 5 minutes.  
       5. priority_skills (array[string]): Top 5 REQUIRED_SKILLS to highlight immediately.  

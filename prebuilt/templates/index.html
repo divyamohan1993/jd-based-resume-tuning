@@ -598,8 +598,7 @@
                         </div>
                         <p class="text-center text-gray-700 text-sm">
                             <span class="font-semibold text-yellow-700">Tailored ATS Compatibility</span><br>
-                            An estimate of how well your resume passes automated filters (based on keyword coverage,
-                            synonyms, placement, and section weight).
+                            An estimate of how well your resume passes automated filters (based on keyword coverage, synonym & skills-taxonomy matching, job-title alignment, years-of-experience fit, education & certification relevance, formatting & section structure compatibility, location proximity, and overall semantic relevance).
                         </p>
                     </div>
 
@@ -616,7 +615,7 @@
                     </div>
 
                     <!-- Overall Match -->
-                    <div
+                    <!-- <div
                         class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 shadow-xl border-l-4 border-yellow-400 flex flex-col items-center justify-center space-y-6">
                         <div class="relative w-full">
                             <canvas id="overallMatchChart"></canvas>
@@ -628,7 +627,7 @@
                             <span class="font-semibold text-yellow-700">Overall Match</span><br>
                             Combines both skill overlap and ATS factors into one single “how well you match” score.
                         </p>
-                    </div>
+                    </div> -->
 
                 </div>
 
@@ -1677,25 +1676,25 @@
             const detail = data.detailed_analysis || data;
             const raw = {
                 // confidence_score: detail.confidence_score,
+                education_alignment: detail.education_alignment,
+                certification_relevance: detail.certification_relevance,
+                continuous_learning: detail.continuous_learning,
                 learning_speed: detail.learning_speed,
                 skill_diversity: detail.skill_diversity,
-                project_complexity: detail.project_complexity,
-                certification_relevance: detail.certification_relevance,
-                assertiveness_level: detail.assertiveness_level,
-                emotional_intelligence: detail.emotional_intelligence,
-                clarity: detail.clarity,
                 quantification_strength: detail.quantification_strength,
                 customization_level: detail.customization_level,
+                clarity: detail.clarity,
+                innovation: detail.innovation,
                 achievement_focus: detail.achievement_focus,
+                project_complexity: detail.project_complexity,
                 leadership_emphasis: detail.leadership_emphasis,
                 teamwork_emphasis: detail.teamwork_emphasis,
-                behavioral_score: detail.behavioral_score,
-                education_alignment: detail.education_alignment,
-                continuous_learning: detail.continuous_learning,
-                adaptability: detail.adaptability,
-                innovation: detail.innovation,
                 problem_solving: detail.problem_solving,
+                adaptability: detail.adaptability,
                 resilience: detail.resilience,
+                // assertiveness_level: detail.assertiveness_level,
+                // emotional_intelligence: detail.emotional_intelligence,
+                // behavioral_score: detail.behavioral_score,
             };
             document.getElementById('analysisconfidencescore').innerText = detail.confidence_score;
             renderAllMetrics(raw);
@@ -1988,7 +1987,7 @@
             });
 
             // update the overlay text
-            document.getElementById('overallMatchText').textContent = `${score}%`;
+            // document.getElementById('overallMatchText').textContent = `${score}%`;
         }
 
 
