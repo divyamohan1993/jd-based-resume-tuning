@@ -1,3 +1,59 @@
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+
+<script>
+function generateEncryptionKey() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let key = '';
+  for (let i = 0; i < 256; i++) {
+    key += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  console.log('Raw key (keep secret):\n', key);
+  console.log('Base64-encoded key (safe to embed):\n', btoa(key));
+}
+
+function encryptPage(key) {
+  const html = document.documentElement.outerHTML;
+  const cipher = btoa(CryptoJS.AES.encrypt(html, key).toString());
+  document.documentElement.innerHTML = 
+    '<pre style="white-space: pre-wrap; word-wrap: break-word;">' + cipher + '</pre>';
+  // also store it globally if you need to ship it into decryptPage later
+  window._encryptedPage = cipher;
+}
+
+// 3) Decrypt back (you’ll normally call this after a prompt or form)
+function decryptPage(key, cipher) {
+  try {
+    // if you didn’t pass cipher, pull from the global
+    cipher = atob(cipher) || atob(window._encryptedPage);
+    const bytes = CryptoJS.AES.decrypt(cipher, key);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    if (!decrypted) throw new Error('Wrong key?');
+    // overwrite the document
+    document.open();
+    document.write(decrypted);
+    document.close();
+  } catch (err) {
+    console.error('Decryption failed:', err);
+    alert('Invalid key or corrupted data.');
+  }
+}
+
+// ─── Usage Example ───────────────────────────────────────────────────────────
+// 1. In console, call `generateEncryptionKey()` → copy the Base64 string.
+// 2. Before encrypting, embed:
+//      const encodedKey = 'PASTE_YOUR_BASE64_HERE';
+//      const key = atob(encodedKey);
+// 3. To encrypt, call: encryptPage(key);
+//    — this will destroy the visible page and dump ciphertext.
+// 4. To decrypt, call (after page loads):
+//      decryptPage(key);
+//    — page will be restored to its original HTML.
+
+generateEncryptionKey()
+</script>
+
+
+
 <!DOCTYPE html>
 
 <!-- ===================================================================
