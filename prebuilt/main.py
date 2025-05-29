@@ -1379,19 +1379,24 @@ def create_resume():
     data = request.get_json() or {}
     raw = sanitize_input(data.get('responses',''))
     jd  = sanitize_input(data.get('job_description',''))
-    # Free-form answers to the builder questions
-    raw = sanitize_input(data.get('responses',''))
-    # (New) answers to the gap-filling prompts, as JSON string
-    gap_answers = sanitize_input(data.get('gap_answers',''))
+
+    # ——— Merge in any gap-filling Q&A ——————————————————————————
+    questions = data.get('questions','')
+    answers   = data.get('gap_answers','')
+    if questions and answers:
+        try:
+            qs = json.loads(questions)
+            asw = json.loads(answers)
+            for q, a in zip(qs, asw):
+                raw += f"\n\nGap-Filling Answers:\nQ: {q}\nA: {a}"
+        except Exception:
+            # fallback: just dump the answers block
+            raw += "\n\nGap-Filling Answers:\n" + answers
 
     if not raw:
         return jsonify({"error":"No responses provided"}), 400
     if not jd:
         return jsonify({"error":"Missing job description"}), 400
-
-    #If the user answered any gap questions, tack them onto the builder block
-    if gap_answers:
-        raw = raw + "\n\nGap-Filling Answers:\n" + gap_answers
 
     model = genai.GenerativeModel(geminimodel)
     prompt = f"""

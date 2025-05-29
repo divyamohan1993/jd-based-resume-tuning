@@ -841,13 +841,18 @@
                 <div id="gapQuestionsList" class="space-y-4">
                     <!-- JS will inject one block per question: -->
                     <!--
-    <div>
-      <label class="block font-medium">1. Why do you want this role?</label>
-      <textarea data-gap-index="0" class="w-full mt-1 p-2 border rounded"></textarea>
-    </div>
-    -->
+                        <div>
+                          <label class="block font-medium">1. Why do you want this role?</label>
+                          <textarea data-gap-index="0" class="w-full mt-1 p-2 border rounded"></textarea>
+                        </div>
+                    -->
                 </div>
             </div>
+            <!-- after your gapQuestionsContainer… -->
+            <button id="submitGapAnswers"
+                class="mt-4 bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition">
+                Submit Answers
+            </button>
 
 
             <!-- Template Selector -->
@@ -1375,6 +1380,48 @@
                 });
         });
 
+        // Handle answer submission
+        const submitBtn = document.getElementById('submitGapAnswers');
+        submitBtn.addEventListener('click', () => {
+            const qEls = document.querySelectorAll('#gapQuestionsList textarea');
+            const questions = [], answers = [];
+
+            qEls.forEach(txt => {
+                const label = txt.previousElementSibling.textContent.replace(/^\d+\.\s*/, '');
+                questions.push(label);
+                answers.push(txt.value.trim());
+            });
+
+            const payload = {
+                responses: document.getElementById('resumeText').value.trim(),
+                job_description: document.getElementById('jobDescription').value.trim(),
+                questions: JSON.stringify(questions),
+                gap_answers: JSON.stringify(answers)
+            };
+
+            fetch('/create_resume', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error(res.statusText);
+                    return res.blob();
+                })
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'My_Resume.docx';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Failed to generate tailored resume. Please try again.');
+                });
+        });
 
         // Upload Resume
         document.getElementById('resumeUpload').addEventListener('change', function (event) {
@@ -1583,7 +1630,6 @@
             const jobDescription = document.getElementById('jobDescription').value.trim();
             const outputFormat = document.getElementById('outputFormat').value;
             const templateStyle = document.getElementById('templateStyle').value;
-            
 
             if (!resumeText) {
                 alert('Please upload or paste your resume');
@@ -1878,27 +1924,29 @@
             });
 
             createAtsScoreChart(aorig.ats_score);
-        }
 
-        // ✏️ After displayDetailedAnalysis(data):
-        const gaps = data.detailed_analysis.questions_to_fix_resume || [];
-        let container = document.getElementById('gapQuestionsContainer');
-        let list = document.getElementById('gapQuestionsList');
-        list.innerHTML = '';
-        if (gaps.length) {
-            gaps.forEach((q, i) => {
-                const div = document.createElement('div');
-                div.innerHTML = `
-      <label class="block font-medium mb-1">${i + 1}. ${q}</label>
-      <textarea data-gap-index="${i}"
+            // ✏️ After displayDetailedAnalysis(data):
+            const gaps = data.detailed_analysis.questions_to_fix_resume || [];
+            const container = document.getElementById('gapQuestionsContainer');            
+            const list = document.getElementById('gapQuestionsList');
+            list.innerHTML = '';
+            if (gaps.length) {
+                gaps.forEach((q, i) => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                    <label class="block font-medium mb-1">${i + 1}. ${q}</label>
+                    <textarea data-gap-index="${i}"
                 class="w-full p-2 border rounded"
                 placeholder="Your answer…"></textarea>
-    `;
-                list.appendChild(div);
-            });
-            container.classList.remove('hidden');
-        } else {
-            container.classList.add('hidden');
+                `;
+                    list.appendChild(div);
+                });
+                container.classList.remove('hidden');
+                document.getElementById('submitGapAnswers').classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+                document.getElementById('submitGapAnswers').classList.add('hidden');
+            }
         }
 
 
