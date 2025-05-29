@@ -817,15 +817,15 @@
             </div>
 
             <div id="gapQuestionsContainer"
-                class="hidden bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 card mb-12 space-y-10 border-l-4 border-yellow-400 shadow-xl pt-6 max-w-screen-xl mx-auto">
+                class="hidden bg-gradient-to-br from-white to-gray-50 mt-10 rounded-2xl p-6 card mb-12 space-y-10 border-l-4 border-yellow-400 shadow-xl pt-6 max-w-screen-xl mx-auto">
                 <!-- NEW: Gap-Filling Questions UI -->
-                <div class="mb-6 bg-yellow-50 p-4 rounded">
-                    <h2 class="text-2xl font-semibold flex items-center text-gray-800"
+                <div class="p-4 rounded">
+                    <h2 class="text-2xl font-semibold flex items-center text-gray-800 space-y-5"
                         style="font-family: 'Playfair Display', serif;">
                         <i class="fas fa-person-circle-question mr-3 text-yellow-500"></i> Quick Gap-Filling Questions
                     </h2>
-                                        
-                    <div id="gapQuestionsList" class="space-y-4">
+
+                    <div id="gapQuestionsList" class="space-y-10">
                         <!-- JS will inject one block per question: -->
                         <!--
                         <div>
@@ -839,7 +839,26 @@
                 <button id="submitGapAnswers"
                     class="mt-4 bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition">
                     Submit Answers
-                </button>      
+                </button>
+
+                <!-- Loading Spinner -->
+                <div id="loadingresumedownloaderfixer" class="my-5 text-center hidden">
+                    <div
+                        class="inline-block animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-yellow-500">
+                    </div>
+                    <p class="mt-3 text-yellow-600 font-medium">Analyzing your answers to create your resume tailored
+                        for JD… this may take up to 2 minutes.
+                    </p>
+                </div>
+
+                <div id="resumedownloaderfixerdownloaded" class="my-5 text-center hidden">
+                    <p class="mt-3 text-red-600 font-medium">
+                        Please review the downloaded resume carefully before submission. This AI-generated document may
+                        contain inaccuracies or hallucinations. <span
+                            style="font-family: 'Playfair Display', serif;">SURAT</span> disclaims any liability arising
+                        from its use—use at your own discretion.
+                    </p>
+                </div>
             </div>
 
             <!-- Loading Spinner -->
@@ -1400,12 +1419,21 @@
                 });
         });
 
-        // Handle answer submission
-        const submitBtn = document.getElementById('submitGapAnswers');
-        submitBtn.addEventListener('click', () => {
+        // Handle answer submission                        
+        document.getElementById('submitGapAnswers').addEventListener('click', () => {
+            let loader = document.getElementById('loadingresumedownloaderfixer');
+            let warning = document.getElementById('resumedownloaderfixerdownloaded');
+
+            // 1) hide the button
+            submitBtn.classList.add('hidden');
+            // 2) show the loading spinner
+            loader.classList.remove('hidden');
+            // ensure warning is hidden until response
+            warning.classList.add('hidden');
+
+            // collect Q&A
             const qEls = document.querySelectorAll('#gapQuestionsList textarea');
             const questions = [], answers = [];
-
             qEls.forEach(txt => {
                 const label = txt.previousElementSibling.textContent.replace(/^\d+\.\s*/, '');
                 questions.push(label);
@@ -1426,9 +1454,13 @@
             })
                 .then(res => {
                     if (!res.ok) throw new Error(res.statusText);
+                    // 3) hide the loader, show the warning
+                    loader.classList.add('hidden');
+                    warning.classList.remove('hidden');
                     return res.blob();
                 })
                 .then(blob => {
+                    // 4) trigger download
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -1439,9 +1471,11 @@
                 })
                 .catch(err => {
                     console.error(err);
+                    loader.classList.add('hidden');
                     alert('Failed to generate tailored resume. Please try again.');
                 });
         });
+
 
         // Upload Resume
         document.getElementById('resumeUpload').addEventListener('change', function (event) {
