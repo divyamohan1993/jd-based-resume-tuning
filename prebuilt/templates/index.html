@@ -1926,7 +1926,7 @@
             createAtsScoreChart(aorig.ats_score);
 
             // ✏️ After displayDetailedAnalysis(data):
-            const gaps = data.detailed_analysis.questions_to_fix_resume || [];
+            const gaps = analysis.questions_to_fix_resume || [];
             const container = document.getElementById('gapQuestionsContainer');            
             const list = document.getElementById('gapQuestionsList');
             list.innerHTML = '';
