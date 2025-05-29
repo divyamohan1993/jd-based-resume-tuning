@@ -816,11 +816,34 @@
                 </div>
             </div>
 
+            <div id="gapQuestionsContainer"
+                class="hidden bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 card mb-12 space-y-10 border-l-4 border-yellow-400 shadow-xl pt-6 max-w-screen-xl mx-auto">
+                <!-- ✏️ NEW: Gap-Filling Questions UI -->
+                <div class="mb-6 bg-yellow-50 p-4 rounded">
+                    <h3 class="font-semibold mb-2 text-yellow-800">Quick Gap-Filling Questions</h3>
+                    <div id="gapQuestionsList" class="space-y-4">
+                        <!-- JS will inject one block per question: -->
+                        <!--
+                        <div>
+                          <label class="block font-medium">1. Why do you want this role?</label>
+                          <textarea data-gap-index="0" class="w-full mt-1 p-2 border rounded"></textarea>
+                        </div>
+                        -->
+                    </div>
+                </div>
+                <!-- after your gapQuestionsContainer… -->
+                <button id="submitGapAnswers"
+                    class="mt-4 bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition">
+                    Submit Answers
+                </button>      
+            </div>
+
             <!-- Loading Spinner -->
             <div id="loadingAnalysis" class="my-5 text-center hidden">
                 <div class="inline-block animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-yellow-500">
                 </div>
-                <p class="mt-3 text-yellow-600 font-medium">Analyzing your resume… this may take up to 2 minutes.</p>
+                <p class="mt-3 text-yellow-600 font-medium">Analyzing your resume… this may take up to 2 minutes.
+                </p>
             </div>
 
         </div>
@@ -835,24 +858,7 @@
                 Generate a professionally tailored resume optimized for this specific job.
             </p>
 
-            <!-- ✏️ NEW: Gap-Filling Questions UI -->
-            <div id="gapQuestionsContainer" class="hidden mb-6 bg-yellow-50 p-4 rounded">
-                <h3 class="font-semibold mb-2 text-yellow-800">Quick Gap-Filling Questions</h3>
-                <div id="gapQuestionsList" class="space-y-4">
-                    <!-- JS will inject one block per question: -->
-                    <!--
-                        <div>
-                          <label class="block font-medium">1. Why do you want this role?</label>
-                          <textarea data-gap-index="0" class="w-full mt-1 p-2 border rounded"></textarea>
-                        </div>
-                    -->
-                </div>
-            </div>
-            <!-- after your gapQuestionsContainer… -->
-            <button id="submitGapAnswers"
-                class="mt-4 bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition">
-                Submit Answers
-            </button>
+
 
 
             <!-- Template Selector -->
@@ -974,9 +980,11 @@
 
             <!-- Description -->
             <p class="text-gray-700 mb-6 leading-relaxed text-base max-w-2xl">
-                Don't have a resume yet? No worries. Just answer these questions in your own words—typos or imperfect
+                Don't have a resume yet? No worries. Just answer these questions in your own words—typos or
+                imperfect
                 grammar are fine. We’ll polish everything for you! Since we already have the job description, your
-                generated resume will be attuned for it. <br><span class="text-red-600 font-semibold">Ensure to verify
+                generated resume will be attuned for it. <br><span class="text-red-600 font-semibold">Ensure to
+                    verify
                     all information before submitting.</span>
             </p>
 
@@ -984,8 +992,10 @@
             <ol class="list-decimal pl-5 space-y-3 text-gray-800 text-base mb-6 max-w-2xl">
                 <li><strong>Contact Info:</strong> Full name, email, phone, LinkedIn/GitHub/personal site URLs</li>
                 <li><strong>Summary/Objective:</strong> 2–3 sentences about your career goals or what you bring</li>
-                <li><strong>Education:</strong> School/University, degree, field, start–end years, (GPA if strong)</li>
-                <li><strong>Technical Skills:</strong> Languages, frameworks, tools—comma-separated, with proficiency
+                <li><strong>Education:</strong> School/University, degree, field, start–end years, (GPA if strong)
+                </li>
+                <li><strong>Technical Skills:</strong> Languages, frameworks, tools—comma-separated, with
+                    proficiency
                     level if you like</li>
                 <li><strong>Projects & Internships:</strong>
                     <ul class="list-disc pl-5">
@@ -1001,7 +1011,8 @@
                 </li>
                 <li><strong>Achievements & Awards:</strong> Competition name, year, result</li>
                 <li><strong>Certifications:</strong> Certification name, provider, date</li>
-                <li><strong>Languages & Interests:</strong> Spoken languages, extracurriculars, hobbies (optional)</li>
+                <li><strong>Languages & Interests:</strong> Spoken languages, extracurriculars, hobbies (optional)
+                </li>
             </ol>
 
             <!-- Response Textarea -->
@@ -1023,7 +1034,8 @@
             </div>
 
             <div id="resumebuildersuccessmessage" class="mt-4 text-green-600 text-center font-medium hidden">
-                Resume generated and downloaded. Refresh the page, paste the job description, and upload this resume to
+                Resume generated and downloaded. Refresh the page, paste the job description, and upload this resume
+                to
                 receive suggestions. Then update your resume accordingly.
             </div>
 
@@ -1115,7 +1127,8 @@
                         <i class="fas fa-chart-line text-3xl text-yellow-500 mb-4"></i>
                         <h3 class="text-xl font-semibold mb-2">Deep Resume Analysis</h3>
                         <p class="text-gray-600 text-sm">
-                            Get matching scores, gap insights, and customized recommendations powered by Google Gemini
+                            Get matching scores, gap insights, and customized recommendations powered by Google
+                            Gemini
                             2.5 pro.
                         </p>
                     </div>
@@ -1124,7 +1137,8 @@
                         <i class="fas fa-chart-pie text-3xl text-yellow-500 mb-4"></i>
                         <h3 class="text-xl font-semibold mb-2">Visual Insights</h3>
                         <p class="text-gray-600 text-sm">
-                            Interactive charts and gauges show you at a glance how you stack up on skills, ATS and more.
+                            Interactive charts and gauges show you at a glance how you stack up on skills, ATS and
+                            more.
                         </p>
                     </div>
 
@@ -1185,12 +1199,14 @@
             </p>
 
             <p class="text-sm">
-                Made with ❤️ by <span class="font-semibold">Divya Mohan, Prince Singh, and Ajay Kumar</span> · Hosted on
+                Made with ❤️ by <span class="font-semibold">Divya Mohan, Prince Singh, and Ajay Kumar</span> ·
+                Hosted on
                 <a href="https://dmj.one"
                     class="text-yellow-300 hover:text-yellow-400 transition underline underline-offset-2">dmj.one</a>
             </p>
             <p class="text-sm">
-                All rights reserved. Unauthorized copying, modification, distribution, or reverse engineering of this
+                All rights reserved. Unauthorized copying, modification, distribution, or reverse engineering of
+                this
                 software is strictly prohibited.
             </p>
 
@@ -1927,7 +1943,7 @@
 
             // ✏️ After displayDetailedAnalysis(data):
             const gaps = analysis.questions_to_fix_resume || [];
-            const container = document.getElementById('gapQuestionsContainer');            
+            const container = document.getElementById('gapQuestionsContainer');
             const list = document.getElementById('gapQuestionsList');
             list.innerHTML = '';
             if (gaps.length) {
