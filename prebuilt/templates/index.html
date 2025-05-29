@@ -1420,7 +1420,8 @@
         });
 
         // Handle answer submission                        
-        document.getElementById('submitGapAnswers').addEventListener('click', () => {
+        document.getElementById('submitGapAnswers').addEventListener('click', () => {            
+            let submitBtn = document.getElementById('submitGapAnswers');
             let loader = document.getElementById('loadingresumedownloaderfixer');
             let warning = document.getElementById('resumedownloaderfixerdownloaded');
 
